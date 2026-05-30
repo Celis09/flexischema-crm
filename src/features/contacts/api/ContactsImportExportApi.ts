@@ -1,5 +1,6 @@
 // @ts-nocheck
-const API_BASE = "https://localhost:7148";
+import API_BASE_URL from "@/config";
+const API_BASE = API_BASE_URL;
 
 async function postCsvFile(endpoint, file, options: any = {}) {
   const { autoCreateDefinitions = false, overwriteExisting = false } = options;
