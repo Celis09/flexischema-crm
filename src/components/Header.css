@@ -1,0 +1,77 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   FlexiSchema CRM — fs-header.css
+   Import order: fs-tokens.css → fs-header.css
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.fs-header {
+  display:         flex;
+  justify-content: space-between;
+  align-items:     center;
+  padding:         0 20px;
+  height:          56px;
+  background:      var(--fs-surface-card);
+  border-bottom:   1px solid var(--fs-border-strong);
+  flex-shrink:     0;
+  position:        sticky;
+  top:             0;
+  z-index:         var(--fs-z-header);
+  font-family:     var(--fs-font);
+}
+
+.fs-header__title {
+  margin:         0;
+  font-size:      14px;
+  font-weight:    700;
+  letter-spacing: -0.2px;
+  color:          var(--fs-text);
+}
+
+.fs-header__title span { color: var(--fs-accent); }
+
+.fs-header__auth {
+  display:     flex;
+  align-items: center;
+  gap:         12px;
+}
+
+.fs-header__role {
+  font-size: 12px;
+  color:     var(--fs-text-dim);
+}
+
+.fs-header__role strong {
+  color:          var(--fs-badge-core-text);
+  background:     var(--fs-badge-core-bg);
+  font-size:      11px;
+  font-weight:    700;
+  letter-spacing: 0.4px;
+  padding:        2px 7px;
+  border-radius:  4px;
+  margin-left:    4px;
+}
+
+.fs-header__btn {
+  padding:       6px 14px;
+  font-size:     12px;
+  font-weight:   600;
+  font-family:   var(--fs-font);
+  border-radius: var(--fs-radius-sm);
+  cursor:        pointer;
+  transition:    background 0.12s, border-color 0.12s;
+  border:        1px solid var(--fs-border-item);
+  background:    var(--fs-surface-item);
+  color:         var(--fs-text);
+}
+
+.fs-header__btn:hover {
+  background:   var(--fs-surface-item-hov);
+  border-color: var(--fs-btn-handle);
+}
+
+.fs-header__btn--login {
+  background:   var(--fs-accent);
+  border-color: transparent;
+  color:        #fff;
+}
+
+.fs-header__btn--login:hover { background: var(--fs-accent-hover); }

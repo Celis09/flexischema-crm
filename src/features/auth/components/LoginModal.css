@@ -1,0 +1,260 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   FlexiSchema CRM — fs-login-modal.css
+   Extends fs-modal-base.css with the branded login experience.
+   Import order: fs-tokens.css → fs-modal-base.css → fs-login-modal.css
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ─── Overlay ─────────────────────────────────────────────────────────────── */
+
+.fs-login-overlay {
+  position:         fixed;
+  inset:            0;
+  display:          flex;
+  align-items:      center;
+  justify-content:  center;
+  z-index:          var(--fs-z-modal);
+  font-family:      var(--fs-font);
+  background-color: var(--fs-bg);
+  background-image: radial-gradient(circle at 50% 110%, #2a0a4a 0%, transparent 50%);
+}
+
+/* ─── Card ────────────────────────────────────────────────────────────────── */
+
+.fs-login-card {
+  position:            relative; /* anchors the close button */
+  background:          var(--fs-surface-glass);
+  backdrop-filter:     blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding:             40px;
+  border-radius:       24px;
+  border:              1px solid var(--fs-border);
+  width:               90%;
+  max-width:           400px;
+  box-shadow:          var(--fs-shadow-modal);
+  text-align:          center;
+  animation:           fsLoginIn 0.2s ease;
+  color:               var(--fs-text);
+}
+
+@keyframes fsLoginIn {
+  from { opacity: 0; transform: scale(0.96) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* ─── Close Button ────────────────────────────────────────────────────────── */
+
+.fs-login-btn-close {
+  position:        absolute;
+  top:             12px;
+  right:           12px;
+  width:           32px;
+  height:          32px;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  background:      rgba(255, 255, 255, 0.06);
+  border:          1px solid var(--fs-border);
+  border-radius:   50%;
+  color:           var(--fs-text-dim);
+  font-size:       14px;
+  cursor:          pointer;
+  transition:      background 0.2s, border-color 0.2s, color 0.2s, transform 0.15s;
+  padding:         0;
+}
+
+.fs-login-btn-close:hover {
+  background:    rgba(255, 255, 255, 0.12);
+  border-color:  var(--fs-accent);
+  color:         var(--fs-text);
+  transform:     rotate(90deg);
+}
+
+/* ─── Logo & Subtitle ─────────────────────────────────────────────────────── */
+
+.fs-login-logo {
+  font-size:     1.8rem;
+  font-weight:   700;
+  margin-bottom: 8px;
+}
+
+.fs-login-logo span { color: var(--fs-accent); }
+
+.fs-login-subtitle {
+  color:         var(--fs-text-dim);
+  font-size:     0.9rem;
+  margin-bottom: 32px;
+}
+
+/* ─── Error Banner ────────────────────────────────────────────────────────── */
+
+.fs-login-error {
+  display:       flex;
+  align-items:   center;
+  gap:           8px;
+  padding:       10px 14px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  background:    var(--fs-error-bg);
+  border:        1px solid var(--fs-error-border);
+  color:         var(--fs-error-text);
+  font-size:     13px;
+  text-align:    left;
+  animation:     fsLoginIn 0.15s ease;
+}
+
+/* ─── Form Fields ─────────────────────────────────────────────────────────── */
+
+.fs-login-field {
+  position:      relative;
+  margin-bottom: 20px;
+  text-align:    left;
+}
+
+.fs-login-field label {
+  display:       block;
+  font-size:     0.78rem;
+  font-weight:   600;
+  color:         var(--fs-text-dim);
+  margin-bottom: 8px;
+  margin-left:   4px;
+}
+
+.fs-login-field i {
+  position:       absolute;
+  left:           16px;
+  bottom:         14px;
+  color:          var(--fs-text-dim);
+  font-size:      14px;
+  pointer-events: none;
+}
+
+.fs-login-field input {
+  width:         100%;
+  box-sizing:    border-box;
+  background:    rgba(0, 0, 0, 0.25);
+  border:        1px solid var(--fs-border);
+  padding:       13px 16px 13px 45px;
+  border-radius: 12px;
+  color:         var(--fs-text);
+  font-size:     0.95rem;
+  font-family:   var(--fs-font);
+  transition:    border-color 0.25s, box-shadow 0.25s;
+  outline:       none;
+}
+
+.fs-login-field input::placeholder { color: var(--fs-text-placeholder); }
+
+.fs-login-field input:focus {
+  border-color: var(--fs-accent);
+  box-shadow:   0 0 15px var(--fs-accent-glow);
+}
+
+/* ─── Actions ─────────────────────────────────────────────────────────────── */
+
+.fs-login-actions {
+  margin-top:     10px;
+  display:        flex;
+  flex-direction: column;
+  gap:            10px;
+}
+
+.fs-login-btn-submit {
+  width:           100%;
+  background:      var(--fs-accent);
+  color:           #fff;
+  padding:         14px;
+  border-radius:   12px;
+  border:          none;
+  font-weight:     700;
+  font-size:       1rem;
+  font-family:     var(--fs-font);
+  cursor:          pointer;
+  transition:      transform 0.2s, filter 0.2s, opacity 0.2s;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  gap:             8px;
+}
+
+.fs-login-btn-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter:    brightness(1.12);
+}
+
+.fs-login-btn-submit:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.fs-login-btn-cancel {
+  width:         100%;
+  background:    transparent;
+  color:         var(--fs-text-dim);
+  padding:       11px;
+  border-radius: 12px;
+  border:        1px solid var(--fs-border);
+  font-size:     0.88rem;
+  font-family:   var(--fs-font);
+  cursor:        pointer;
+  transition:    border-color 0.2s, color 0.2s;
+}
+
+.fs-login-btn-cancel:hover {
+  border-color: var(--fs-accent);
+  color:        var(--fs-text);
+}
+
+/* ─── Spinner ─────────────────────────────────────────────────────────────── */
+
+@keyframes fsLoginSpin {
+  to { transform: rotate(360deg); }
+}
+
+.fs-login-spinner {
+  width:            15px;
+  height:           15px;
+  border-radius:    50%;
+  border:           2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  animation:        fsLoginSpin 0.7s linear infinite;
+  display:          inline-block;
+}
+
+/* ─── Demo Accounts ───────────────────────────────────────────────────────── */
+
+.fs-login-demo-accounts {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--fs-border);
+  text-align: center;
+}
+
+.fs-login-demo-accounts p {
+  font-size: 0.8rem;
+  color: var(--fs-text-dim);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.fs-login-demo-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.fs-login-demo-actions button {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--fs-border);
+  color: var(--fs-text);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-family: var(--fs-font);
+  cursor: pointer;
+  transition: all 0.2s;
+  flex: 1;
+}
+
+.fs-login-demo-actions button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--fs-accent);
+}

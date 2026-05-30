@@ -1,0 +1,316 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   FlexiSchema CRM — fs-column-manager.css
+   Import order: fs-tokens.css → fs-column-manager.css
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ─── Backdrop ─────────────────────────────────────────────────────────────── */
+
+.fs-cm-backdrop {
+  position:        fixed;
+  inset:           0;
+  background:      rgba(0, 0, 0, 0.45);
+  z-index:         var(--fs-z-cm-backdrop);
+  backdrop-filter: blur(2px);
+}
+
+/* ─── Modal ────────────────────────────────────────────────────────────────── */
+
+.fs-cm-modal {
+  position:       fixed;
+  top:            50%;
+  left:           50%;
+  transform:      translate(-50%, -50%);
+  z-index:        var(--fs-z-cm-modal);
+  width:          min(440px, 95vw);
+  max-height:     85vh;
+  background:     var(--fs-surface-card);
+  border:         1px solid var(--fs-border-strong);
+  border-radius:  var(--fs-radius-lg);
+  box-shadow:     var(--fs-shadow-modal);
+  display:        flex;
+  flex-direction: column;
+  overflow:       hidden;
+  font-family:    var(--fs-font);
+}
+
+/* ─── Header ───────────────────────────────────────────────────────────────── */
+
+.fs-cm-header {
+  padding:         18px 24px 16px;
+  border-bottom:   1px solid var(--fs-border-strong);
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  flex-shrink:     0;
+}
+
+.fs-cm-header__title {
+  margin:         0;
+  font-size:      16px;
+  font-weight:    600;
+  color:          var(--fs-text);
+  letter-spacing: -0.2px;
+}
+
+.fs-cm-header__subtitle {
+  margin:    3px 0 0;
+  font-size: 12px;
+  color:     var(--fs-text-dim);
+}
+
+/* ─── Close button ─────────────────────────────────────────────────────────── */
+
+.fs-cm-close {
+  width:           32px;
+  height:          32px;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  background:      rgba(255, 255, 255, 0.06);
+  border:          1px solid var(--fs-border);
+  border-radius:   50%;
+  cursor:          pointer;
+  color:           var(--fs-text-dim);
+  font-size:       14px;
+  padding:         0;
+  transition:      background 0.2s, border-color 0.2s, color 0.2s, transform 0.15s;
+}
+
+.fs-cm-close:hover {
+  background:   rgba(255, 255, 255, 0.12);
+  border-color: var(--fs-accent);
+  color:        var(--fs-text);
+  transform:    rotate(90deg);
+}
+
+/* ─── Warning toast ────────────────────────────────────────────────────────── */
+
+.fs-cm-warning {
+  margin:        10px 16px 0;
+  padding:       7px 12px;
+  background:    var(--fs-cm-warning-bg);
+  border:        1px solid var(--fs-cm-warning-border);
+  border-radius: var(--fs-radius-sm);
+  font-size:     12px;
+  color:         var(--fs-cm-warning-text);
+  display:       flex;
+  align-items:   center;
+  gap:           6px;
+  flex-shrink:   0;
+  animation:     fsCmFadeIn 0.15s ease;
+}
+
+@keyframes fsCmFadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Bulk action row ──────────────────────────────────────────────────────── */
+
+.fs-cm-bulk-row {
+  display:       flex;
+  align-items:   center;
+  gap:           8px;
+  padding:       10px 16px;
+  border-bottom: 1px solid var(--fs-border-strong);
+  flex-shrink:   0;
+}
+
+.fs-cm-bulk-btn {
+  font-size:     12px;
+  font-family:   inherit;
+  padding:       3px 10px;
+  border-radius: 4px;
+  border:        1px solid var(--fs-border-item);
+  background:    var(--fs-surface-item);
+  color:         var(--fs-text);
+  cursor:        pointer;
+  transition:    background 0.12s, opacity 0.12s;
+}
+
+.fs-cm-bulk-btn:hover:not(:disabled) { background: var(--fs-surface-item-hov); }
+.fs-cm-bulk-btn:disabled             { opacity: 0.3; cursor: default; }
+
+.fs-cm-bulk-count {
+  margin-left: auto;
+  font-size:   11px;
+  color:       var(--fs-text-dim);
+}
+
+/* ─── Section label ────────────────────────────────────────────────────────── */
+
+.fs-cm-section-label {
+  padding:        6px 10px 4px;
+  font-size:      10px;
+  font-weight:    700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color:          var(--fs-text-dim);
+  background:     var(--fs-surface-header);
+  border-radius:  4px;
+  margin-bottom:  4px;
+  margin-top:     2px;
+  position:       sticky;
+  top:            0;
+  z-index:        var(--fs-z-base);
+}
+
+/* ─── Scrollable list ──────────────────────────────────────────────────────── */
+
+.fs-cm-list {
+  flex:       1;
+  overflow-y: auto;
+  padding:    8px 12px;
+}
+
+.fs-cm-list::-webkit-scrollbar       { width: 6px; }
+.fs-cm-list::-webkit-scrollbar-track { background: transparent; }
+.fs-cm-list::-webkit-scrollbar-thumb { background: var(--fs-btn-handle); border-radius: 3px; }
+.fs-cm-list::-webkit-scrollbar-thumb:hover { background: var(--fs-text-dim); }
+
+/* ─── Row ──────────────────────────────────────────────────────────────────── */
+
+.fs-cm-row {
+  display:        flex;
+  align-items:    center;
+  gap:            10px;
+  padding:        8px 10px;
+  border-radius:  var(--fs-radius-sm);
+  border:         1px solid transparent;
+  cursor:         grab;
+  user-select:    none;
+  transition:     background 0.1s, opacity 0.15s, border-color 0.1s;
+  margin-bottom:  2px;
+}
+
+.fs-cm-row:hover        { background: var(--fs-surface-item-hov); }
+.fs-cm-row:active       { cursor: grabbing; }
+.fs-cm-row--hidden      { opacity: 0.38; }
+.fs-cm-row--core        { cursor: default; }
+.fs-cm-row--drag-over   {
+  border-color: var(--fs-accent);
+  background:   var(--fs-cm-selected-bg);
+  border-top:   2px solid var(--fs-cm-selected-border);
+}
+
+.fs-cm-row__handle {
+  color:          var(--fs-btn-handle);
+  font-size:      13px;
+  line-height:    1;
+  letter-spacing: 1px;
+  flex-shrink:    0;
+  cursor:         grab;
+}
+
+.fs-cm-row--core .fs-cm-row__handle { cursor: default; opacity: 0.3; }
+.fs-cm-row:active .fs-cm-row__handle { cursor: grabbing; }
+
+.fs-cm-row__checkbox {
+  flex-shrink:  0;
+  width:        15px;
+  height:       15px;
+  cursor:       pointer;
+  accent-color: var(--fs-accent);
+}
+
+.fs-cm-row__checkbox:disabled { cursor: default; }
+
+.fs-cm-row__label {
+  flex:          1;
+  font-size:     13px;
+  color:         var(--fs-text);
+  cursor:        pointer;
+  white-space:   nowrap;
+  overflow:      hidden;
+  text-overflow: ellipsis;
+}
+
+.fs-cm-row--core .fs-cm-row__label { cursor: default; }
+
+/* ─── Core badge ───────────────────────────────────────────────────────────── */
+
+.fs-cm-row__core-badge {
+  font-size:      10px;
+  font-weight:    700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color:          var(--fs-badge-core-text);
+  background:     var(--fs-badge-core-bg);
+  padding:        1px 6px;
+  border-radius:  3px;
+  flex-shrink:    0;
+}
+
+/* ─── Footer ───────────────────────────────────────────────────────────────── */
+
+.fs-cm-footer {
+  padding:         14px 24px;
+  border-top:      1px solid var(--fs-border-strong);
+  display:         flex;
+  align-items:     center;
+  justify-content: flex-end;
+  gap:             8px;
+  flex-shrink:     0;
+}
+
+.fs-cm-footer__hint {
+  font-size:    11px;
+  color:        var(--fs-text-dim);
+  margin-right: auto;
+  font-style:   italic;
+}
+
+/* ─── Buttons ──────────────────────────────────────────────────────────────── */
+
+.fs-cm-btn {
+  padding:       8px 18px;
+  font-size:     13px;
+  font-weight:   500;
+  font-family:   inherit;
+  border-radius: var(--fs-radius-sm);
+  cursor:        pointer;
+  transition:    background 0.12s;
+}
+
+.fs-cm-btn--cancel {
+  border:     1px solid var(--fs-border-item);
+  background: var(--fs-btn-bg);
+  color:      var(--fs-text);
+}
+
+.fs-cm-btn--cancel:hover { background: var(--fs-btn-bg-hov); }
+
+.fs-cm-btn--primary {
+  border:      none;
+  background:  var(--fs-accent);
+  color:       #fff;
+  font-weight: 600;
+  padding:     8px 20px;
+}
+
+.fs-cm-btn--primary:hover { background: var(--fs-accent-hover); }
+
+/* Safely disable interactions and style core labels cleanly */
+.fs-cm-row__checkbox:disabled + .fs-cm-row__label {
+  pointer-events: none;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Styling for a valid drop target */
+.fs-cm-row--drag-over {
+  border: 2px dashed #007bff; /* Adjust to your primary theme color */
+  background-color: rgba(0, 123, 255, 0.05);
+}
+
+/* NEW: Styling for an invalid drop target */
+.fs-cm-row--drag-invalid {
+  border: 2px dashed #dc3545; /* Red border to indicate error */
+  background-color: #f8d7da; /* Light red background */
+  cursor: not-allowed !important;
+}
+
+/* Prevent pointer events on children during an invalid drag to keep things smooth */
+.fs-cm-row--drag-invalid * {
+  pointer-events: none;
+}

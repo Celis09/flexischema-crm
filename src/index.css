@@ -1,0 +1,65 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   index.css — global reset & base
+   Import order: fs-tokens.css → fs-base.css → fs-mobile.css → index.css
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@import './styles/fs-mobile.css';
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  margin:  0;
+  padding: 0;
+  height:  100%;
+  width:   100%;
+}
+
+body {
+  font-family:               var(--fs-font);
+  font-size:                 14px;
+  line-height:               1.5;
+  font-weight:               400;
+  background-color:          var(--fs-bg);
+  color:                     var(--fs-text);
+  -webkit-font-smoothing:    antialiased;
+  -moz-osx-font-smoothing:   grayscale;
+  text-rendering:            optimizeLegibility;
+}
+
+#root {
+  display:        flex;
+  flex-direction: column;
+}
+
+a {
+  font-weight:     500;
+  color:           var(--fs-accent);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--fs-accent-hover);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin:      0;
+  font-weight: 600;
+  line-height: 1.2;
+  color:       var(--fs-text);
+}
+
+/* Reset h1 size — Vite default sets it to 3.2em which breaks layouts */
+h1 {
+  font-size: 1.5em;
+}
+
+/* Global button reset — actual styles come from fs-base.css / component css */
+button {
+  all:        unset;
+  box-sizing: border-box;
+  cursor:     pointer;
+}

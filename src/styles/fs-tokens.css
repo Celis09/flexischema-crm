@@ -1,0 +1,240 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   FlexiSchema CRM — fs-tokens.css
+   Single source of truth for every design token.
+   Import this FIRST in every file: fs-tokens.css → fs-base.css → page.css
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+/* ─── Dark theme (default) ───────────────────────────────────────────────── */
+:root,
+[data-theme="dark"] {
+
+  /* ── Typography ── */
+  --fs-font:      'Plus Jakarta Sans', system-ui, sans-serif;
+  --fs-font-mono: 'JetBrains Mono', monospace;
+
+  /* ── Radii ── */
+  --fs-radius-sm: 6px;
+  --fs-radius:    10px;
+  --fs-radius-lg: 14px;
+
+  /* ── Spacing scale ── */
+  --fs-space-1: 4px;
+  --fs-space-2: 8px;
+  --fs-space-3: 12px;
+  --fs-space-4: 16px;
+  --fs-space-5: 20px;
+  --fs-space-6: 24px;
+
+  /* ── Backgrounds ── */
+  --fs-bg:               #080808;
+  --fs-surface:          #111111;   /* Sidebar */
+  --fs-surface-card:     #161616;   /* Modal / Main Panels */
+  --fs-surface-header:   #181818;   /* Topbar / Table Head */
+  --fs-surface-input:    #0f0f0f;
+  --fs-surface-item:     #1e1e24;   /* List Items */
+  --fs-surface-item-hov: #28282f;
+  --fs-surface-drop:     #1c1c1c;
+  --fs-surface-glass:    rgba(26, 26, 26, 0.72);
+
+  /* ── Text ── */
+  --fs-text:             #ffffff;
+  --fs-text-dim:         #94a3b8;
+  --fs-text-placeholder: #475569;
+
+  /* ── Borders ── */
+  --fs-border:           rgba(255, 255, 255, 0.09);   /* Subtle dividers */
+  --fs-border-strong:    rgba(255, 255, 255, 0.22);   /* Structural edges */
+  --fs-border-item:      #2a2a30;                     /* Internal components */
+
+  /* ── Brand / Accent ── */
+  --fs-accent:           #7c6af7;   /* Primary Purple */
+  --fs-accent-alt:       #8a2be2;   /* Vibrant Purple */
+  --fs-accent-hover:     #6a58e0;
+  --fs-accent-bg:        #1e1a40;
+  --fs-accent-dim:       rgba(124, 106, 247, 0.12);
+  --fs-accent-sel:       rgba(124, 106, 247, 0.18);
+  --fs-accent-glow:      rgba(124, 106, 247, 0.30);
+
+  /* ── Interactive states ── */
+  --fs-hover:            rgba(124, 106, 247, 0.07);
+  --fs-sel:              rgba(124, 106, 247, 0.16);
+  --fs-row-active-bg:    rgba(124, 106, 247, 0.22);
+  --fs-row-selected-bg:  rgba(124, 106, 247, 0.16);
+
+  /* ── Buttons ── */
+  --fs-btn-bg:           #1a1a1a;
+  --fs-btn-bg-hov:       #242424;
+  --fs-btn-border:       rgba(255, 255, 255, 0.12);
+  --fs-btn-handle:       #44444f;
+
+  /* ── Table ── */
+  --fs-row-h:            54px;
+  --fs-thead-h:          40px;
+
+  /* ── Badges ── */
+  --fs-badge-active-bg:    rgba(22, 163, 74, 0.12);
+  --fs-badge-active-c:     #4ade80;
+  --fs-badge-inactive-bg:  rgba(148, 163, 184, 0.10);
+  --fs-badge-inactive-c:   #94a3b8;
+  --fs-badge-susp-bg:      rgba(239, 68, 68, 0.12);
+  --fs-badge-susp-c:       #f87171;
+  --fs-badge-warn-bg:      rgba(251, 191, 36, 0.12);
+  --fs-badge-warn-c:       #fbbf24;
+  --fs-badge-core-bg:      #2a2040;
+  --fs-badge-core-text:    #9b8bff;
+  --fs-badge-admin-bg:     rgba(124, 106, 247, 0.12);
+  --fs-badge-admin-c:      #7c6af7;
+
+  /* ── Semantic ── */
+  --fs-success-bg:       rgba(22, 163, 74, 0.12);
+  --fs-success-border:   rgba(74, 222, 128, 0.25);
+  --fs-success-text:     #4ade80;
+  --fs-error-bg:         rgba(239, 68, 68, 0.12);
+  --fs-error-border:     rgba(248, 113, 113, 0.25);
+  --fs-error-text:       #f87171;
+  --fs-warning-bg:       rgba(239, 68, 68, 0.10);
+  --fs-warning-border:   rgba(239, 68, 68, 0.30);
+  --fs-warning-text:     #f87171;
+
+  /* ── Z-index scale ── */
+  --fs-z-base:        1;
+  --fs-z-frozen:      2;
+  --fs-z-resize:      20;
+  --fs-z-actionbar:   50;
+  --fs-z-header:      100;
+  --fs-z-btn-clear:   100;
+  --fs-z-drop:        200;
+  --fs-z-snackbar:    200;
+  --fs-z-overlay:     400;
+  --fs-z-modal:       1200;
+  --fs-z-cm-backdrop: 1300;
+  --fs-z-cm-modal:    1400;
+  --fs-z-tooltip:     1500;
+
+  /* ── Misc ── */
+  --fs-shadow:           0 12px 32px rgba(0, 0, 0, 0.40);
+  --fs-shadow-modal:     0 20px 60px rgba(0, 0, 0, 0.50);
+
+  /* ── Background gradient (ContactsPage style) ── */
+  --fs-bg-gradient:      radial-gradient(circle at 50% -10%, #2a0a4a 0%, transparent 40%);
+  --fs-glass:            rgba(26, 26, 26, 0.70);
+
+  /* ── Column Manager warning ── */
+  --fs-cm-warning-bg:      rgba(239, 68, 68, 0.10);
+  --fs-cm-warning-border:  rgba(239, 68, 68, 0.30);
+  --fs-cm-warning-text:    #f87171;
+  --fs-cm-success-bg:      rgba(22, 163, 74, 0.12);
+  --fs-cm-success-border:  rgba(22, 163, 74, 0.30);
+  --fs-cm-success-text:    #4ade80;
+  --fs-cm-selected-bg:     rgba(124, 106, 247, 0.15);
+  --fs-cm-selected-border: #7c6af7;
+
+  /* ── Outside close button ── */
+  --fs-close-outside-bg:     rgba(255, 255, 255, 0.10);
+  --fs-close-outside-border: rgba(255, 255, 255, 0.22);
+  --fs-close-outside-color:  #ffffff;
+  --fs-close-outside-bg-hov: rgba(255, 255, 255, 0.20);
+  --fs-close-outside-bd-hov: rgba(255, 255, 255, 0.48);
+}
+
+/* ─── Light theme ─────────────────────────────────────────────────────────── */
+[data-theme="light"] {
+
+  /* ── Backgrounds ── */
+  --fs-bg:               #f4f6fa;
+  --fs-surface:          #ffffff;
+  --fs-surface-card:     #ffffff;
+  --fs-surface-header:   #f0f2f8;
+  --fs-surface-input:    #eef2f7;
+  --fs-surface-item:     #efeff3;
+  --fs-surface-item-hov: #e6e6ec;
+  --fs-surface-drop:     #ffffff;
+  --fs-surface-glass:    rgba(255, 255, 255, 0.85);
+
+  /* ── Text ── */
+  --fs-text:             #0f172a;
+  --fs-text-dim:         #64748b;
+  --fs-text-placeholder: #94a3b8;
+
+  /* ── Borders ── */
+  --fs-border:           #e2e8f0;
+  --fs-border-strong:    #d1d5db;
+  --fs-border-item:      #e2e8f0;
+
+  /* ── Brand / Accent ── */
+  --fs-accent:           #7c6af7;
+  --fs-accent-alt:       #6a58e0;
+  --fs-accent-hover:     #5a48d0;
+  --fs-accent-bg:        #ede9fe;
+  --fs-accent-dim:       rgba(106, 88, 224, 0.10);
+  --fs-accent-sel:       rgba(106, 88, 224, 0.15);
+  --fs-accent-glow:      rgba(106, 88, 224, 0.20);
+
+  /* ── Interactive states ── */
+  --fs-hover:            rgba(106, 88, 224, 0.06);
+  --fs-sel:              rgba(106, 88, 224, 0.12);
+  --fs-row-active-bg:    rgba(106, 88, 224, 0.14);
+  --fs-row-selected-bg:  rgba(106, 88, 224, 0.12);
+
+  /* ── Buttons ── */
+  --fs-btn-bg:           #f1f5f9;
+  --fs-btn-bg-hov:       #e2e8f0;
+  --fs-btn-border:       #cbd5e1;
+  --fs-btn-handle:       #94a3b8;
+
+  /* ── Table ── */
+  --fs-row-h:            54px;
+  --fs-thead-h:          40px;
+
+  /* ── Badges ── */
+  --fs-badge-active-bg:    #dcfce7;
+  --fs-badge-active-c:     #16a34a;
+  --fs-badge-inactive-bg:  #f1f5f9;
+  --fs-badge-inactive-c:   #64748b;
+  --fs-badge-susp-bg:      #fee2e2;
+  --fs-badge-susp-c:       #dc2626;
+  --fs-badge-warn-bg:      #fef9c3;
+  --fs-badge-warn-c:       #92400e;
+  --fs-badge-core-bg:      #ede9fe;
+  --fs-badge-core-text:    #6a58e0;
+  --fs-badge-admin-bg:     rgba(124, 106, 247, 0.10);
+  --fs-badge-admin-c:      #6a58e0;
+
+  /* ── Semantic ── */
+  --fs-success-bg:       #dcfce7;
+  --fs-success-border:   #bbf7d0;
+  --fs-success-text:     #16a34a;
+  --fs-error-bg:         #fee2e2;
+  --fs-error-border:     #fecaca;
+  --fs-error-text:       #dc2626;
+  --fs-warning-bg:       #fef9c3;
+  --fs-warning-border:   #fde68a;
+  --fs-warning-text:     #92400e;
+
+  /* ── Misc ── */
+  --fs-shadow:           0 8px 24px rgba(0, 0, 0, 0.08);
+  --fs-shadow-modal:     0 8px 30px rgba(0, 0, 0, 0.10);
+
+  /* ── Background gradient ── */
+  --fs-bg-gradient:      radial-gradient(circle at 50% -10%, #f5f3ff 0%, transparent 40%);
+  --fs-glass:            rgba(255, 255, 255, 0.80);
+
+  /* ── Column Manager warning ── */
+  --fs-cm-warning-bg:      rgba(239, 68, 68, 0.06);
+  --fs-cm-warning-border:  rgba(239, 68, 68, 0.20);
+  --fs-cm-warning-text:    #dc2626;
+  --fs-cm-success-bg:      rgba(22, 163, 74, 0.08);
+  --fs-cm-success-border:  rgba(22, 163, 74, 0.25);
+  --fs-cm-success-text:    #16a34a;
+  --fs-cm-selected-bg:     rgba(124, 106, 247, 0.08);
+  --fs-cm-selected-border: #7c6af7;
+
+  /* ── Outside close button ── */
+  --fs-close-outside-bg:     rgba(0, 0, 0, 0.16);
+  --fs-close-outside-border: rgba(0, 0, 0, 0.28);
+  --fs-close-outside-color:  #ffffff;
+  --fs-close-outside-bg-hov: rgba(0, 0, 0, 0.32);
+  --fs-close-outside-bd-hov: rgba(0, 0, 0, 0.52);
+}

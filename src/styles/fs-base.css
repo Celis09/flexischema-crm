@@ -1,0 +1,802 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   FlexiSchema CRM — fs-base.css
+   Shared layout + UI primitives for every CRM page.
+   Import order: fs-tokens.css → fs-base.css → page-specific.css
+
+   All rules scoped to .fs-root so they never bleed into modals or
+   third-party code that lives outside the page shell.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ─── Shell ──────────────────────────────────────────────────────────────── */
+
+.fs-root {
+  font-family:      var(--fs-font);
+  font-size:        14px;
+  color:            var(--fs-text);
+  background-color: var(--fs-bg);
+  background-image: var(--fs-bg-gradient);
+  min-height:       100vh;
+  height:           auto;
+  overflow-y:       auto;
+  padding:          24px;
+  box-sizing:       border-box;
+  transition:       background 0.3s, color 0.3s;
+}
+
+/* Scoped reset — only inside our shell */
+.fs-root * {
+  box-sizing: border-box;
+  margin:     0;
+  padding:    0;
+}
+
+/* ─── Density variants ───────────────────────────────────────────────────── */
+
+.fs-root[data-density="compact"] { --fs-row-h: 38px; }
+
+.fs-root[data-density="compact"] .fs-cell {
+  font-size: 0.82rem;
+  padding:   0 12px;
+}
+
+.fs-root[data-density="compact"] .fs-badge {
+  font-size: 9px;
+  padding:   2px 6px;
+}
+
+/* ─── Topbar ─────────────────────────────────────────────────────────────── */
+
+.fs-topbar {
+  display:         flex;
+  justify-content: space-between;
+  align-items:     center;
+  margin-bottom:   20px;
+}
+
+.fs-logo {
+  font-size:      1.35rem;
+  font-weight:    800;
+  letter-spacing: -0.5px;
+  color:          var(--fs-text);
+}
+
+.fs-logo span            { color: var(--fs-accent); }
+
+.fs-logo .fs-breadcrumb {
+  font-size:      0.75rem;
+  font-weight:    600;
+  color:          var(--fs-text-dim);
+  margin-left:    10px;
+  letter-spacing: 0;
+}
+
+.fs-page-header {
+  display:         flex;
+  justify-content: space-between;
+  align-items:     center;
+  margin-bottom:   20px;
+}
+
+.fs-page-title {
+  font-size:      1.5rem;
+  font-weight:    800;
+  letter-spacing: -0.5px;
+  color:          var(--fs-text);
+}
+
+.fs-page-title span { color: var(--fs-accent); }
+
+/* ─── Theme Toggle ───────────────────────────────────────────────────────── */
+
+.fs-theme-btn {
+  width:           38px;
+  height:          38px;
+  border-radius:   var(--fs-radius);
+  border:          1px solid var(--fs-btn-border);
+  background:      var(--fs-btn-bg);
+  color:           var(--fs-text-dim);
+  cursor:          pointer;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  font-size:       15px;
+  transition:      color 0.2s, border-color 0.2s;
+}
+
+.fs-theme-btn:hover {
+  color:        var(--fs-accent);
+  border-color: var(--fs-accent);
+}
+
+/* ─── Action Bar ─────────────────────────────────────────────────────────── */
+
+.fs-action-bar {
+  background:           var(--fs-glass);
+  backdrop-filter:      blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border:               1px solid var(--fs-border);
+  border-radius:        var(--fs-radius-lg);
+  padding:              10px 16px;
+  display:              flex;
+  justify-content:      space-between;
+  align-items:          center;
+  gap:                  10px;
+  margin-bottom:        16px;
+  box-shadow:           var(--fs-shadow);
+  position:             relative;
+  z-index:              var(--fs-z-actionbar);
+  flex-wrap:            wrap;
+}
+
+.fs-left-g,
+.fs-right-g {
+  display:     flex;
+  align-items: center;
+  gap:         8px;
+  flex-wrap:   wrap;
+}
+
+/* ─── Inputs ─────────────────────────────────────────────────────────────── */
+
+.fs-search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.fs-search-icon {
+  position:       absolute;
+  left:           11px;
+  top:            50%;
+  transform:      translateY(-50%);
+  color:          var(--fs-text-dim);
+  font-size:      13px;
+  pointer-events: none;
+  z-index:        1;
+}
+
+.fs-search-wrap .fs-input {
+  padding-right: 28px;
+}
+
+.fs-search-clear {
+  position:   absolute;
+  right:      6px;
+  background: none;
+  border:     none;
+  cursor:     pointer;
+  padding:    0;
+  line-height: 1;
+  color:      var(--fs-text-dim);
+  font-size:  12px;
+}
+
+.fs-search-clear:hover {
+  color: var(--fs-text);
+}
+
+.fs-input,
+.fs-select,
+.fs-date-input {
+  background:    var(--fs-surface-input);
+  border:        1px solid var(--fs-border);
+  color:         var(--fs-text);
+  border-radius: var(--fs-radius);
+  height:        38px;
+  font-family:   var(--fs-font);
+  font-size:     12.5px;
+  outline:       none;
+  transition:    border-color 0.2s;
+}
+
+.fs-input:focus,
+.fs-select:focus,
+.fs-date-input:focus { border-color: var(--fs-accent); }
+
+.fs-input::placeholder { color: var(--fs-text-dim); }
+
+.fs-search-wrap .fs-input {
+  padding: 0 12px 0 34px;
+  width:   190px;
+}
+
+.fs-select { padding: 0 10px; cursor: pointer; }
+
+/* ─── Date Range Group ───────────────────────────────────────────────────── */
+
+.fs-date-group {
+  display:       flex;
+  align-items:   center;
+  gap:           6px;
+  background:    var(--fs-surface-input);
+  border:        1px solid var(--fs-border);
+  border-radius: var(--fs-radius);
+  padding:       0 10px;
+  height:        38px;
+}
+
+.fs-date-group .fs-date-input {
+  border:       none !important;
+  background:   transparent;
+  width:        108px;
+  font-size:    12px;
+  color-scheme: dark;
+  height:       34px;
+  padding:      0;
+}
+
+[data-theme="light"] .fs-date-group .fs-date-input { color-scheme: light; }
+
+.fs-date-sep {
+  color: var(--fs-text-dim);
+  font-size: 10px;
+}
+
+/* ─── Date Action Buttons ────────────────────────────────────────────────── */
+
+.fs-date-actions { display: flex; gap: 6px; }
+
+.fs-btn-apply,
+.fs-btn-clear {
+  height:          38px;
+  border-radius:   var(--fs-radius);
+  border:          1px solid var(--fs-btn-border);
+  cursor:          pointer;
+  font-family:     var(--fs-font);
+  font-weight:     700;
+  font-size:       12px;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  gap:             6px;
+  opacity:         0;
+  pointer-events:  none;
+  transform:       translateX(-8px);
+  transition:      opacity 0.25s, transform 0.25s, background 0.2s, border-color 0.2s;
+}
+
+.fs-btn-apply { background: var(--fs-btn-bg); color: var(--fs-text); padding: 0 16px; }
+.fs-btn-clear { background: var(--fs-btn-bg); color: var(--fs-text-dim); width: 38px; }
+
+.fs-btn-apply.fs-visible,
+.fs-btn-clear.fs-visible {
+  opacity:        1;
+  pointer-events: all;
+  transform:      translateX(0);
+}
+
+.fs-btn-apply:hover { background: var(--fs-accent); color: #fff; border-color: var(--fs-accent); }
+.fs-btn-clear:hover { color: var(--fs-badge-susp-c); border-color: rgba(239, 68, 68, 0.5); }
+
+/* ─── Divider ────────────────────────────────────────────────────────────── */
+
+.fs-divider {
+  width:       1px;
+  height:      28px;
+  background:  var(--fs-border);
+  flex-shrink: 0;
+}
+
+/* ─── Generic Button ─────────────────────────────────────────────────────── */
+
+.fs-btn {
+  height:        38px;
+  padding:       0 15px;
+  border-radius: var(--fs-radius);
+  border:        1px solid var(--fs-btn-border);
+  background:    var(--fs-btn-bg);
+  color:         var(--fs-text);
+  font-family:   var(--fs-font);
+  font-weight:   700;
+  font-size:     12px;
+  cursor:        pointer;
+  display:       inline-flex;
+  align-items:   center;
+  gap:           7px;
+  transition:    color 0.2s, border-color 0.2s, background 0.2s, opacity 0.2s;
+  white-space:   nowrap;
+}
+
+.fs-btn:hover:not(:disabled) {
+  border-color: var(--fs-accent);
+  color:        var(--fs-accent);
+}
+
+.fs-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* Solid primary variant */
+.fs-btn--primary {
+  background:   var(--fs-accent);
+  border-color: var(--fs-accent);
+  color:        #fff;
+}
+
+.fs-btn--primary:hover:not(:disabled) {
+  background:   var(--fs-accent-hover);
+  border-color: var(--fs-accent-hover);
+  color:        #fff;
+}
+
+/* Destructive variant */
+.fs-btn--danger:hover:not(:disabled) {
+  border-color: var(--fs-badge-susp-c);
+  color:        var(--fs-badge-susp-c);
+}
+
+/* Icon-only button */
+.fs-icon-btn {
+  background:      transparent;
+  border:          1px solid var(--fs-border);
+  color:           var(--fs-text-dim);
+  width:           36px;
+  height:          36px;
+  border-radius:   var(--fs-radius-sm);
+  cursor:          pointer;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  font-size:       13px;
+  transition:      color 0.15s, border-color 0.15s, background 0.15s;
+  flex-shrink:     0;
+}
+
+.fs-icon-btn:hover:not(:disabled) {
+  color:        var(--fs-accent);
+  border-color: var(--fs-accent);
+  background:   var(--fs-accent-dim);
+}
+
+.fs-icon-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* ─── Batch / Dropdown ───────────────────────────────────────────────────── */
+
+.fs-batch-wrap {
+  position:       relative;
+  opacity:        0;
+  pointer-events: none;
+  transition:     opacity 0.2s;
+}
+
+.fs-batch-wrap.fs-active {
+  opacity:        1;
+  pointer-events: all;
+}
+
+.fs-batch-btn {
+  background:    var(--fs-text);
+  color:         var(--fs-bg);
+  border:        none;
+  height:        38px;
+  padding:       0 13px;
+  border-radius: var(--fs-radius);
+  font-weight:   800;
+  font-size:     12px;
+  cursor:        pointer;
+  display:       flex;
+  align-items:   center;
+  gap:           7px;
+  font-family:   var(--fs-font);
+}
+
+.fs-drop {
+  position:      absolute;
+  top:           calc(100% + 7px);
+  left:          0;
+  width:         185px;
+  background:    var(--fs-surface-drop);
+  border:        1px solid var(--fs-border);
+  border-radius: 11px;
+  box-shadow:    var(--fs-shadow);
+  z-index:       var(--fs-z-drop);
+  padding:       4px;
+  display:       none;
+}
+
+.fs-drop.fs-open {
+  display:   block;
+  animation: fsFadeUp 0.15s ease;
+}
+
+.fs-drop-item {
+  padding:       9px 11px;
+  font-size:     12.5px;
+  font-weight:   600;
+  cursor:        pointer;
+  display:       flex;
+  align-items:   center;
+  gap:           8px;
+  border-radius: 7px;
+  color:         var(--fs-text);
+}
+
+.fs-drop-item:hover { background: var(--fs-hover); color: var(--fs-accent); }
+
+.fs-drop-hr {
+  border:     0;
+  border-top: 1px solid var(--fs-border);
+  margin:     4px 0;
+}
+
+/* ─── Toast Notifications ────────────────────────────────────────────────── */
+
+.fs-toast {
+  padding:       10px 14px;
+  border-radius: var(--fs-radius);
+  font-size:     12.5px;
+  font-weight:   600;
+  display:       flex;
+  align-items:   center;
+  gap:           8px;
+  margin-bottom: 12px;
+  border:        1px solid transparent;
+  animation:     fsFadeUp 0.2s ease;
+}
+
+.fs-toast--success {
+  background:   var(--fs-success-bg);
+  color:        var(--fs-success-text);
+  border-color: var(--fs-success-border);
+}
+
+.fs-toast--error {
+  background:   var(--fs-error-bg);
+  color:        var(--fs-error-text);
+  border-color: var(--fs-error-border);
+}
+
+/* ─── Grid Card ──────────────────────────────────────────────────────────── */
+
+.fs-grid-card {
+  background:    var(--fs-surface);
+  border:        1px solid var(--fs-border);
+  border-radius: var(--fs-radius-lg);
+  overflow:      hidden;
+  box-shadow:    var(--fs-shadow);
+  position:      relative;
+}
+
+.fs-scroll-x {
+  overflow-x: auto;
+  width:      100%;
+}
+
+.fs-scroll-x::-webkit-scrollbar       { height: 6px; }
+.fs-scroll-x::-webkit-scrollbar-track { background: transparent; }
+.fs-scroll-x::-webkit-scrollbar-thumb { background: var(--fs-border-strong); border-radius: 3px; }
+.fs-scroll-x::-webkit-scrollbar-thumb:hover { background: var(--fs-text-dim); }
+
+/* ─── Header cell ────────────────────────────────────────────────────────── */
+
+.fs-hcell {
+  background:     var(--fs-surface-header);
+  color:          var(--fs-text-dim);
+  font-size:      10px;
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  border-bottom:  1.5px solid var(--fs-border);
+  cursor:         pointer;
+  user-select:    none;
+  padding:        0 14px;
+  height:         var(--fs-row-h);
+  display:        flex;
+  align-items:    center;
+  gap:            6px;
+  overflow:       hidden;
+  white-space:    nowrap;
+  position:       relative;
+}
+
+.fs-hcell:first-child                     { cursor: default; }
+.fs-hcell:hover:not(:first-child)         { color: var(--fs-text); }
+.fs-hcell--sorted                         { color: var(--fs-text); }
+
+/* ─── Body cell ──────────────────────────────────────────────────────────── */
+
+.fs-cell {
+  height:        var(--fs-row-h);
+  padding:       0 14px;
+  display:       flex;
+  align-items:   center;
+  border-bottom: 1px solid var(--fs-border);
+  font-size:     13.5px;
+  overflow:      hidden;
+  white-space:   nowrap;
+  text-overflow: ellipsis;
+  /* NO background here — row state classes below own the background */
+  transition:    background 0.12s;
+}
+
+/* ─── Row states ─────────────────────────────────────────────────────────── */
+/*
+   IMPORTANT: The split-pane ContactsTable does NOT use .fs-row wrapper divs.
+   Row state is applied directly to each .fs-cell via JS-assigned classes:
+     row-hovered  → mouse is over this logical row
+     row-selected → checkbox is checked (Admin) or row clicked (Editor/Viewer)
+     row-active   → row was clicked to focus it
+
+   The old .fs-row descendant rules are intentionally removed to prevent
+   any ancestor element accidentally matching and highlighting all cells.
+   Only legacy non-split tables still use .fs-row; keep those rules minimal.
+*/
+
+/* Legacy wrapper — only used outside the split-pane table */
+.fs-row { display: contents; cursor: pointer; }
+.fs-row.fs-inactive .fs-cell  { opacity: 0.42; filter: grayscale(1); }
+.fs-row.fs-suspended .fs-cell { text-decoration: line-through; opacity: 0.55; }
+.fs-row.fs-suspended .fs-badge { text-decoration: none; }
+
+/* Split-pane per-cell row states — these are the authoritative hover/select rules */
+.fs-cell.row-hovered  { background: var(--fs-hover); }
+.fs-cell.row-selected { background: var(--fs-row-selected-bg); }
+.fs-cell.row-active   { background: var(--fs-row-active-bg); }
+
+/* row-active takes priority over row-selected when both are present */
+.fs-cell.row-active.row-selected { background: var(--fs-row-active-bg); }
+
+/* Empty / loading row */
+.fs-state-row {
+  grid-column:     1 / -1;
+  height:          80px;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  color:           var(--fs-text-dim);
+  font-size:       13px;
+  font-style:      italic;
+}
+
+/* ─── Sort icon ──────────────────────────────────────────────────────────── */
+
+.fs-sort-icon           { opacity: 0.3; font-size: 9px; }
+.fs-sort-icon.fs-active { opacity: 1; color: var(--fs-accent); }
+
+/* ─── Resize handle ──────────────────────────────────────────────────────── */
+
+.fs-resize-handle {
+  position:     absolute;
+  right:        0; top: 0; bottom: 0;
+  width:        5px;
+  cursor:       col-resize;
+  z-index:      var(--fs-z-resize);
+  border-right: 1px solid var(--fs-border);
+  transition:   border-color 0.15s, background 0.15s;
+}
+
+.fs-resize-handle:hover,
+.fs-resize-handle:active {
+  border-right-color: var(--fs-accent);
+  background:         var(--fs-accent-glow);
+}
+
+.fs-hcell:has(.fs-resize-handle:active) { pointer-events: none; }
+.fs-resize-handle:active                { pointer-events: auto; }
+
+/* ─── Cell Typography Variants ───────────────────────────────────────────── */
+
+.fs-id-cell   { font-family: var(--fs-font-mono); font-size: 11px; color: var(--fs-text-dim); }
+.fs-uname     { font-weight: 700; font-size: 13px; }
+.fs-email     { color: var(--fs-text-dim); font-size: 12px; }
+.fs-date-val  { color: var(--fs-text-dim); font-size: 12px; }
+.fs-role      { font-family: var(--fs-font-mono); font-size: 10.5px; font-weight: 600; color: var(--fs-text-dim); letter-spacing: 0.4px; }
+.fs-role--admin { color: var(--fs-accent); }
+
+/* ─── Status Badges ──────────────────────────────────────────────────────── */
+
+.fs-badge {
+  display:        inline-block;
+  padding:        3px 9px;
+  border-radius:  var(--fs-radius-sm);
+  font-size:      10px;
+  font-weight:    800;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.fs-badge--active    { background: var(--fs-badge-active-bg);   color: var(--fs-badge-active-c); }
+.fs-badge--inactive  { background: var(--fs-badge-inactive-bg); color: var(--fs-badge-inactive-c); }
+.fs-badge--suspended { background: var(--fs-badge-susp-bg);     color: var(--fs-badge-susp-c); }
+.fs-badge--core {
+  font-size:      10px;
+  font-weight:    700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color:          var(--fs-badge-core-text);
+  background:     var(--fs-badge-core-bg);
+  padding:        1px 6px;
+  border-radius:  3px;
+  flex-shrink:    0;
+}
+
+/* ─── Pagination ─────────────────────────────────────────────────────────── */
+
+.fs-pagination {
+  display:     flex;
+  align-items: center;
+  gap:         10px;
+  padding:     16px 0 4px;
+  flex-wrap:   wrap;
+}
+
+.fs-page-info {
+  font-size: 12px;
+  color:     var(--fs-text-dim);
+}
+
+.fs-page-btn {
+  height:        32px;
+  padding:       0 14px;
+  border-radius: 8px;
+  border:        1px solid var(--fs-border);
+  background:    var(--fs-surface);
+  color:         var(--fs-text);
+  font-family:   var(--fs-font);
+  font-size:     12px;
+  font-weight:   600;
+  cursor:        pointer;
+  display:       inline-flex;
+  align-items:   center;
+  gap:           5px;
+  transition:    color 0.15s, border-color 0.15s;
+}
+
+.fs-page-btn:hover:not(:disabled) { border-color: var(--fs-accent); color: var(--fs-accent); }
+.fs-page-btn:disabled             { opacity: 0.3; cursor: not-allowed; }
+
+/* ─── Snackbar ───────────────────────────────────────────────────────────── */
+
+.fs-snackbar {
+  position:      fixed;
+  bottom:        24px;
+  left:          50%;
+  transform:     translateX(-50%);
+  background:    var(--fs-surface);
+  border:        1px solid var(--fs-border);
+  color:         var(--fs-text);
+  padding:       10px 18px;
+  border-radius: var(--fs-radius);
+  font-size:     13px;
+  font-weight:   600;
+  box-shadow:    var(--fs-shadow);
+  z-index:       var(--fs-z-snackbar);
+  white-space:   nowrap;
+  animation:     fsSnackIn 0.2s ease;
+}
+
+/* ─── Inline Status Dropdown ─────────────────────────────────────────────── */
+
+.fs-status-select {
+  padding:       4px 8px;
+  font-size:     12px;
+  font-family:   var(--fs-font);
+  border-radius: 7px;
+  border:        1px solid var(--fs-border);
+  background:    var(--fs-surface-input);
+  color:         var(--fs-text);
+  cursor:        pointer;
+  outline:       none;
+  height:        30px;
+}
+
+.fs-status-select:focus { border-color: var(--fs-accent); }
+
+/* ─── Checkbox ───────────────────────────────────────────────────────────── */
+
+input[type="checkbox"] {
+  accent-color: var(--fs-accent);
+  width:        15px;
+  height:       15px;
+  cursor:       pointer;
+}
+
+/* ─── Animations ─────────────────────────────────────────────────────────── */
+
+@keyframes fsFadeUp {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+@keyframes fsPulse {
+  0%, 100% { opacity: 0.35; }
+  50%       { opacity: 0.60; }
+}
+
+@keyframes fsSnackIn {
+  from { opacity: 0; transform: translate(-50%, 10px); }
+  to   { opacity: 1; transform: translate(-50%, 0);    }
+}
+
+/* ─── Print ───────────────────────────────────────────────────────────────── */
+
+@media print {
+  .fs-root .fs-action-bar,
+  .fs-root .fs-pagination,
+  .fs-root .fs-snackbar { display: none !important; }
+
+  .fs-root .fs-grid-card { border: none; box-shadow: none; }
+
+  .fs-root .fs-cell {
+    background: #fff !important;
+    color:      #000 !important;
+    border-color: #ccc !important;
+  }
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .fs-root .fs-search-wrap .fs-input { width: 100%; }
+  .fs-root .fs-action-bar            { gap: 8px; }
+  .fs-root .fs-cell                  { padding: 0 12px; font-size: 0.82rem; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Split-pane frozen/scrollable grid layout for ContactsTable.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ─── Grid Wrapper (outer flex container) ────────────────────────────────── */
+
+.fs-grid-wrapper {
+  display:        flex;
+  flex-direction: row;
+  align-items:    stretch;
+  width:          100%;
+  overflow:       hidden;
+  background:     var(--fs-surface);
+  border:         1px solid var(--fs-border);
+  border-radius:  var(--fs-radius-lg);
+  box-shadow:     var(--fs-shadow);
+}
+
+/* ─── Frozen (left) pane ─────────────────────────────────────────────────── */
+
+.fs-frozen-grid {
+  display:      grid;
+  flex-shrink:  0;
+  border-right: 1px solid var(--fs-border-strong);
+  background:   var(--fs-surface);
+  position:     relative;
+  z-index:      var(--fs-z-frozen);
+}
+
+/* ─── Scrollable (right) pane ────────────────────────────────────────────── */
+
+.fs-scroll-container {
+  flex:        1 1 0;
+  min-width:   0;
+  overflow-x:  auto;
+  background:  var(--fs-surface);
+  position:    relative;
+  z-index:     var(--fs-z-base);
+}
+
+.fs-scroll-container::-webkit-scrollbar       { height: 6px; }
+.fs-scroll-container::-webkit-scrollbar-track { background: transparent; }
+.fs-scroll-container::-webkit-scrollbar-thumb {
+  background:    var(--fs-border-strong);
+  border-radius: 3px;
+}
+.fs-scroll-container::-webkit-scrollbar-thumb:hover { background: var(--fs-text-dim); }
+
+/* ─── Inner scroll grid ──────────────────────────────────────────────────── */
+
+.fs-scroll-grid {
+  display:    grid;
+  width:      100%;
+  min-width:  max-content;
+}
+
+/* ─── Scrollbar spacer ───────────────────────────────────────────────────── */
+
+.fs-scrollbar-spacer {
+  height:     6px;
+  background: transparent;
+}
+
+/* ─── Print overrides ────────────────────────────────────────────────────── */
+
+@media print {
+  .fs-grid-wrapper     { border: none; box-shadow: none; }
+  .fs-frozen-grid      { box-shadow: none; border-right: 1px solid #ccc; }
+  .fs-scroll-container { overflow: visible; }
+}

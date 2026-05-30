@@ -1,0 +1,119 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   FlexiSchema CRM — fs-contacts-table.css
+   Native <table> layout for ContactsTable component.
+   Import order: fs-tokens.css → fs-contacts-table.css
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.fs-ct-wrapper {
+  position:    relative;
+  padding-top: 8px;
+  font-family: var(--fs-font);
+  font-size:   14px;
+  color:       var(--fs-text);
+}
+
+/* ─── Table base ─────────────────────────────────────────────────────────── */
+
+.fs-ct-table {
+  width:            100%;
+  border-collapse:  collapse;
+  table-layout:     fixed;
+}
+
+/* ─── Header cell ────────────────────────────────────────────────────────── */
+
+.fs-ct-th {
+  padding:          6px 8px;
+  vertical-align:   middle;
+  background:       var(--fs-surface-header);
+  border-bottom:    1px solid var(--fs-border);
+  text-align:       left;
+  position:         relative;
+  font-size:        10px;
+  font-weight:      800;
+  text-transform:   uppercase;
+  letter-spacing:   1.1px;
+  color:            var(--fs-text-dim);
+}
+
+/* Blocked visual when dragging core column into extras zone */
+.fs-ct-th.fs-ct-blocked {
+  background:  var(--fs-error-bg);
+  border-left: 3px solid var(--fs-badge-susp-c);
+}
+
+.fs-ct-blocked-badge {
+  margin-top: 6px;
+  font-size:  11px;
+  color:      var(--fs-error-text);
+  display:    inline-block;
+}
+
+/* ─── Header inner clickable area ────────────────────────────────────────── */
+
+.fs-ct-header-inner {
+  display:     flex;
+  align-items: center;
+  gap:         8px;
+  cursor:      pointer;
+  user-select: none;
+}
+
+.fs-ct-sort-indicator {
+  margin-left: 6px;
+  font-size:   12px;
+  color:       var(--fs-text-dim);
+}
+
+.fs-ct-sort-indicator.fs-active { color: var(--fs-accent); }
+
+/* ─── Body cells ─────────────────────────────────────────────────────────── */
+
+.fs-ct-table td {
+  padding:       8px;
+  border-bottom: 1px solid var(--fs-border);
+  overflow:      hidden;
+  text-overflow: ellipsis;
+  white-space:   nowrap;
+  background:    var(--fs-surface);
+  transition:    background 0.12s;
+}
+
+.fs-ct-row:hover td { background: var(--fs-hover); }
+
+/* ─── Special cells ──────────────────────────────────────────────────────── */
+
+.fs-ct-cell-select {
+  width:      48px;
+  text-align: center;
+}
+
+.fs-ct-cell-id {
+  width:                120px;
+  font-variant-numeric: tabular-nums;
+  font-family:          var(--fs-font-mono);
+  font-size:            11px;
+  color:                var(--fs-text-dim);
+}
+
+/* ─── Snackbar (rejection hint) ──────────────────────────────────────────── */
+
+.fs-ct-snackbar {
+  position:      absolute;
+  top:           -44px;
+  right:         12px;
+  background:    var(--fs-badge-susp-c);
+  color:         #fff;
+  padding:       8px 12px;
+  border-radius: 6px;
+  box-shadow:    var(--fs-shadow);
+  z-index:       var(--fs-z-snackbar);
+  font-size:     13px;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+
+@media (max-width: 720px) {
+  .fs-ct-header-inner { font-size: 13px; }
+  .fs-ct-table td     { padding: 6px; }
+}

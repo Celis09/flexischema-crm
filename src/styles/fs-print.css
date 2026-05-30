@@ -1,0 +1,310 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   FlexiSchema CRM — fs-print.css
+   Production print stylesheet for Contacts and all CRM pages.
+
+   Import AFTER fs-base.css:
+     fs-tokens.css → fs-base.css → fs-print.css
+
+   Follows standard print best practices:
+     • Forces white/black palette (no ink waste)
+     • Collapses the split-pane grid into a single flat table
+     • Repeats the header row on every page
+     • Avoids page breaks inside rows
+     • Adds a document header with title + timestamp
+     • Removes all interactive chrome (action bar, buttons, modals, drawer)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@media print {
+
+  /* ─── 1. Page setup ──────────────────────────────────────────────────────── */
+
+  /* Default: landscape — most contact tables are wide */
+  @page {
+    size:   A4 landscape;
+    margin: 15mm 12mm 18mm;
+  }
+
+  /* Portrait override — add data-print-layout="portrait" to .fs-root,
+     then call window.print(). The named @page rule targets elements
+     assigned page: portrait via JS before printing. */
+  @page portrait {
+    size:   A4 portrait;
+    margin: 15mm 12mm 18mm;
+  }
+
+  .fs-root[data-print-layout="portrait"] * {
+    page: portrait;
+  }
+
+  /* ─── 2. Global resets ───────────────────────────────────────────────────── */
+
+  *,
+  *::before,
+  *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust:         exact !important;
+    box-shadow:                 none !important;
+    text-shadow:                none !important;
+    animation:                  none !important;
+    transition:                 none !important;
+  }
+
+  /* ─── 3. Shell & background ──────────────────────────────────────────────── */
+
+  .fs-root {
+    background:       #fff !important;
+    background-image: none !important;
+    color:            #000 !important;
+    padding:          0 !important;
+    min-height:       auto !important;
+    font-size:        11px !important;
+    font-family:      'Plus Jakarta Sans', Arial, sans-serif !important;
+  }
+
+  /* ─── 4. Hide all interactive chrome ────────────────────────────────────── */
+
+  .fs-sidebar,
+  .fs-header,
+  .fs-action-bar,
+  .fs-pagination,
+  .fs-toast,
+  .fs-snackbar,
+  .fs-icon-btn,
+  .fs-btn,
+  .fs-btn--primary,
+  .fs-drop,
+  .fs-theme-btn,
+  .fs-resize-handle,
+  .fs-sort-icon,
+  .fs-search-wrap,
+  .fs-date-group,
+  .fs-divider,
+  [class*="Modal"],
+  [class*="Drawer"],
+  [class*="modal"],
+  [class*="drawer"],
+  .fs-cell input[type="checkbox"],
+  .fs-hcell input[type="checkbox"],
+  .fs-status-select {
+    display: none !important;
+  }
+
+  /* ─── 5. Document header ─────────────────────────────────────────────────── */
+
+  .fs-page-header {
+    display:        flex !important;
+    align-items:    baseline !important;
+    gap:            12px !important;
+    margin-bottom:  8px !important;
+    padding-bottom: 6px !important;
+    border-bottom:  1.5px solid #000 !important;
+  }
+
+  .fs-page-title {
+    font-size:      16px !important;
+    font-weight:    800 !important;
+    color:          #000 !important;
+    letter-spacing: -0.3px !important;
+  }
+
+  .fs-page-title span {
+    color: #000 !important;
+  }
+
+  /* Timestamp injected via JS: header.dataset.printDate = new Date().toLocaleString() */
+  .fs-page-header::after {
+    content:     "Printed: " attr(data-print-date);
+    font-size:   9px !important;
+    color:       #666 !important;
+    font-weight: 400 !important;
+    margin-left: auto !important;
+  }
+
+  /* ─── 6. Collapse split-pane layout into a single flat grid ─────────────── */
+
+  .fs-grid-wrapper {
+    display:    block !important;
+    border:     none !important;
+    box-shadow: none !important;
+    overflow:   visible !important;
+  }
+
+  /* Hide the frozen pane (select checkbox + sequence columns) */
+  .fs-frozen-grid {
+    display: none !important;
+  }
+
+  .fs-scroll-container {
+    overflow: visible !important;
+    flex:     none !important;
+    width:    100% !important;
+  }
+
+  .fs-scroll-grid {
+    width:                 100% !important;
+    min-width:             0 !important;
+    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)) !important;
+  }
+
+  .fs-scrollbar-spacer {
+    display: none !important;
+  }
+
+  /* ─── 7. Header cells ────────────────────────────────────────────────────── */
+
+  .fs-hcell {
+    background:                  #f0f0f0 !important;
+    color:                       #000 !important;
+    font-size:                   8px !important;
+    font-weight:                 800 !important;
+    letter-spacing:              0.8px !important;
+    border-bottom:               1.5px solid #999 !important;
+    border-right:                0.5px solid #ccc !important;
+    height:                      auto !important;
+    padding:                     5px 8px !important;
+    white-space:                 normal !important;
+    break-inside:                avoid !important;
+    -webkit-column-break-inside: avoid !important;
+    page-break-inside:           avoid !important;
+  }
+
+  /* ─── 8. Body cells ──────────────────────────────────────────────────────── */
+
+  .fs-cell {
+    background:        #fff !important;
+    color:             #111 !important;
+    font-size:         9.5px !important;
+    height:            auto !important;
+    min-height:        22px !important;
+    padding:           4px 8px !important;
+    border-bottom:     0.5px solid #ddd !important;
+    border-right:      0.5px solid #eee !important;
+    white-space:       normal !important;
+    overflow:          visible !important;
+    text-overflow:     clip !important;
+    word-break:        break-word !important;
+    break-inside:      avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Zebra striping — class toggled via JS before window.print() */
+  .fs-cell.print-row-even {
+    background: #f8f8f8 !important;
+  }
+
+  /* Strip row-state highlights */
+  .fs-cell.row-hovered,
+  .fs-cell.row-selected,
+  .fs-cell.row-active {
+    background: #fff !important;
+    outline:    none !important;
+  }
+
+  /* ─── 9. Cell typography variants ───────────────────────────────────────── */
+
+  .fs-id-cell  { color: #555 !important; font-size: 8.5px !important; }
+  .fs-uname    { color: #000 !important; font-size: 10px !important;  font-weight: 700 !important; }
+  .fs-email    { color: #333 !important; font-size: 9px !important; }
+  .fs-date-val { color: #555 !important; font-size: 9px !important; }
+  .fs-role     { color: #555 !important; font-size: 8.5px !important; }
+
+  /* ─── 10. Status badges ──────────────────────────────────────────────────── */
+
+  .fs-badge {
+    font-size:      7.5px !important;
+    padding:        2px 5px !important;
+    border-radius:  3px !important;
+    font-weight:    800 !important;
+    letter-spacing: 0.5px !important;
+    border:         1px solid transparent !important;
+  }
+
+  .fs-badge--active {
+    background:   #d4edda !important;
+    color:        #155724 !important;
+    border-color: #c3e6cb !important;
+  }
+
+  .fs-badge--inactive {
+    background:   #e2e8f0 !important;
+    color:        #374151 !important;
+    border-color: #cbd5e1 !important;
+  }
+
+  .fs-badge--suspended {
+    background:   #f8d7da !important;
+    color:        #721c24 !important;
+    border-color: #f5c6cb !important;
+  }
+
+  /* ─── 11. Links ──────────────────────────────────────────────────────────── */
+
+  a {
+    color:           #000 !important;
+    text-decoration: none !important;
+  }
+
+  /* Uncomment to show full URL after link text:
+  a[href]::after { content: " (" attr(href) ")"; font-size: 8px; color: #555; } */
+
+  /* ─── 12. Loading / empty states ─────────────────────────────────────────── */
+
+  .fs-state-row {
+    display: none !important;
+  }
+
+  /* ─── 13. Page break rules ───────────────────────────────────────────────── */
+
+  .fs-hcell       { break-inside: avoid !important; }
+  .fs-cell        { break-inside: avoid !important; }
+  .fs-page-header { break-after:  avoid !important; }
+
+  /* ─── 14. Page footer via CSS counters ───────────────────────────────────── */
+
+  @page {
+    @bottom-right {
+      content:   "Page " counter(page) " of " counter(pages);
+      font-size: 8px;
+      color:     #666;
+    }
+    @bottom-left {
+      content:   "FlexiSchema CRM — Contacts";
+      font-size: 8px;
+      color:     #666;
+    }
+  }
+
+} /* end @media print */
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   JS INTEGRATION NOTE
+   ═══════════════════════════════════════════════════════════════════════════
+
+   Call handlePrint() from your print button instead of window.print() directly.
+   It stamps the timestamp and applies zebra-striping before the dialog opens.
+
+   function handlePrint() {
+     // 1. Stamp timestamp on page header
+     const header = document.querySelector('.fs-page-header');
+     if (header) header.dataset.printDate = new Date().toLocaleString();
+
+     // 2. Zebra-stripe rows (CSS grid can't nth-row without knowing col count)
+     const grid     = document.querySelector('.fs-scroll-grid');
+     const cells    = grid ? [...grid.querySelectorAll('.fs-cell')] : [];
+     const colCount = parseInt(
+       getComputedStyle(grid).getPropertyValue('--col-count') || '1', 10
+     );
+     cells.forEach((cell, i) => {
+       cell.classList.toggle('print-row-even', Math.floor(i / colCount) % 2 === 0);
+     });
+
+     window.print();
+   }
+
+   In ContactsPage replace:
+     <button ... onClick={() => window.print()}>⎙</button>
+   with:
+     <button ... onClick={handlePrint}>⎙</button>
+
+   ═══════════════════════════════════════════════════════════════════════════ */

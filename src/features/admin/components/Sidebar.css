@@ -1,0 +1,212 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   FlexiSchema CRM — fs-sidebar.css
+   Import order: fs-tokens.css → fs-sidebar.css
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ─── Shell ──────────────────────────────────────────────────────────────── */
+
+.fs-sidebar {
+  display:        flex;
+  flex-direction: column;
+  width:          220px;
+  min-height:     100vh;
+  background:     var(--fs-surface-card);
+  border-right:   1px solid var(--fs-border-strong);
+  transition:     width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow:       hidden;
+  flex-shrink:    0;
+  position:       relative;
+}
+
+.fs-sidebar--collapsed { width: 52px; }
+
+/* ─── Header ─────────────────────────────────────────────────────────────── */
+
+.fs-sidebar__header {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  padding:         18px 14px 12px;
+  border-bottom:   1px solid var(--fs-border-strong);
+  min-height:      56px;
+  flex-shrink:     0;
+}
+
+.fs-sidebar__logo {
+  display:     flex;
+  align-items: center;
+  gap:         9px;
+  overflow:    hidden;
+  white-space: nowrap;
+}
+
+.fs-sidebar__logo-icon {
+  width:           24px;
+  height:          24px;
+  border-radius:   var(--fs-radius-sm);
+  background:      var(--fs-accent);
+  flex-shrink:     0;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+}
+
+.fs-sidebar__logo-text {
+  font-size:      13px;
+  font-weight:    700;
+  letter-spacing: -0.2px;
+  color:          var(--fs-text);
+  opacity:        1;
+  transition:     opacity 0.15s ease;
+}
+
+.fs-sidebar--collapsed .fs-sidebar__logo-text { opacity: 0; pointer-events: none; }
+
+/* ─── Collapse Toggle ────────────────────────────────────────────────────── */
+
+.fs-sidebar__toggle {
+  background:      none;
+  border:          1px solid var(--fs-border-item);
+  border-radius:   4px;
+  color:           var(--fs-text-dim);
+  cursor:          pointer;
+  width:           24px;
+  height:          24px;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  flex-shrink:     0;
+  padding:         0;
+  transition:      background 0.12s, color 0.12s, border-color 0.12s;
+}
+
+.fs-sidebar__toggle:hover {
+  background:   var(--fs-surface-item-hov);
+  color:        var(--fs-text);
+  border-color: var(--fs-btn-handle);
+}
+
+.fs-sidebar__toggle svg { transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1); }
+.fs-sidebar--collapsed .fs-sidebar__toggle svg { transform: rotate(180deg); }
+
+/* ─── Nav ────────────────────────────────────────────────────────────────── */
+
+.fs-sidebar__nav {
+  flex:       1;
+  padding:    10px 8px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.fs-sidebar__section-label {
+  font-size:      10px;
+  font-weight:    700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color:          var(--fs-text-dim);
+  padding:        6px 8px 4px;
+  white-space:    nowrap;
+  overflow:       hidden;
+  opacity:        1;
+  transition:     opacity 0.12s ease;
+}
+
+.fs-sidebar--collapsed .fs-sidebar__section-label { opacity: 0; }
+
+/* ─── Nav Item ───────────────────────────────────────────────────────────── */
+
+.fs-nav-item {
+  display:        flex;
+  align-items:    center;
+  gap:            10px;
+  width:          100%;
+  padding:        8px;
+  border-radius:  var(--fs-radius-sm);
+  border:         none;
+  background:     none;
+  color:          var(--fs-text-dim);
+  font-size:      13px;
+  font-weight:    500;
+  font-family:    var(--fs-font);
+  cursor:         pointer;
+  text-align:     left;
+  white-space:    nowrap;
+  transition:     background 0.12s, color 0.12s;
+  margin-bottom:  2px;
+  position:       relative;
+}
+
+.fs-nav-item:hover         { background: var(--fs-surface-item-hov); color: var(--fs-text); }
+.fs-nav-item--active       { background: var(--fs-accent-bg);  color: var(--fs-accent); }
+.fs-nav-item--active:hover { background: var(--fs-accent-bg);  color: var(--fs-accent); }
+
+.fs-nav-item--active::before {
+  content:       "";
+  position:      absolute;
+  left:          0;
+  top:           20%;
+  height:        60%;
+  width:         3px;
+  border-radius: 0 2px 2px 0;
+  background:    var(--fs-accent);
+}
+
+/* ─── Icon / Label / Tooltip ─────────────────────────────────────────────── */
+
+.fs-nav-item__icon {
+  width:           16px;
+  height:          16px;
+  flex-shrink:     0;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  opacity:         0.75;
+}
+
+.fs-nav-item:hover .fs-nav-item__icon,
+.fs-nav-item--active .fs-nav-item__icon { opacity: 1; }
+
+.fs-nav-item__label {
+  flex:          1;
+  overflow:      hidden;
+  text-overflow: ellipsis;
+  opacity:       1;
+  transition:    opacity 0.12s ease;
+}
+
+.fs-sidebar--collapsed .fs-nav-item__label { opacity: 0; pointer-events: none; width: 0; }
+
+.fs-nav-item__tooltip {
+  display:        none;
+  position:       absolute;
+  left:           calc(100% + 10px);
+  top:            50%;
+  transform:      translateY(-50%);
+  background:     var(--fs-surface-item);
+  border:         1px solid var(--fs-border-item);
+  color:          var(--fs-text);
+  font-size:      12px;
+  font-weight:    500;
+  padding:        5px 10px;
+  border-radius:  5px;
+  white-space:    nowrap;
+  pointer-events: none;
+  z-index:        var(--fs-z-tooltip);
+  box-shadow:     var(--fs-shadow);
+}
+
+.fs-sidebar--collapsed .fs-nav-item:hover .fs-nav-item__tooltip { display: block; }
+
+/* ─── Footer ─────────────────────────────────────────────────────────────── */
+
+.fs-sidebar__footer {
+  padding:     10px 8px 14px;
+  border-top:  1px solid var(--fs-border-strong);
+  flex-shrink: 0;
+}
+
+/* ─── Scrollbar ──────────────────────────────────────────────────────────── */
+
+.fs-sidebar__nav::-webkit-scrollbar       { width: 4px; }
+.fs-sidebar__nav::-webkit-scrollbar-track { background: transparent; }
+.fs-sidebar__nav::-webkit-scrollbar-thumb { background: var(--fs-btn-handle); border-radius: 2px; }
