@@ -656,13 +656,15 @@ export default function ContactsPage({ userRole, requireLogin }) {
     const blob = new Blob([html], { type: "text/html" });
     const url  = URL.createObjectURL(blob);
 
-    const win = window.open(url, "_blank", "noopener,noreferrer");
-
-    if (win) {
-      win.addEventListener("load", () => URL.revokeObjectURL(url), { once: true });
-    } else {
-      setTimeout(() => URL.revokeObjectURL(url), 30_000);
-    }
+    const a = document.createElement("a");
+    a.href = url;
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    
+    setTimeout(() => URL.revokeObjectURL(url), 30_000);
   }, [contacts, activeDefinitions, selectedIdsRef]);
 
   // ─── Manual refresh ───────────────────────────────────────────────────────
