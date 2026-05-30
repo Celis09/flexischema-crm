@@ -86,9 +86,11 @@ export default function ActionSummaries() {
         toDate:   toDate   || undefined,
         page, pageSize: PAGE_SIZE, sortBy, sortOrder,
       });
-      setSummaries(data.items ?? data ?? []);
+      const fetchedItems = data.items ?? data ?? [];
+      setSummaries(fetchedItems);
       // Ensure totalPages is never 0 to prevent "Page 1 of 0" display
-      const totalPages = Math.max(1, Math.ceil(total / pageSize));
+      const total = data.totalCount ?? data.total ?? fetchedItems.length;
+      setTotalPages(Math.max(1, Math.ceil(total / PAGE_SIZE)));
     } catch (err) {
       if (err.errors && typeof err.errors === "object") {
         setError(Object.values(err.errors).flat().join(" • "));
