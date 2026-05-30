@@ -20,6 +20,7 @@ export default function MonitoringPage() {
         padding:      "12px 16px 0",
         borderBottom: "1px solid var(--fs-border-strong)",
         flexShrink:   0,
+        overflowX:    "auto"
       }}>
         {TABS.map(t => (
           <button

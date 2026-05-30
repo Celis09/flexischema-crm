@@ -68,10 +68,25 @@
   border-color: var(--fs-btn-handle);
 }
 
-.fs-header__btn--login {
-  background:   var(--fs-accent);
-  border-color: transparent;
-  color:        #fff;
-}
-
 .fs-header__btn--login:hover { background: var(--fs-accent-hover); }
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .fs-header {
+    padding: 8px 12px;
+    height: auto;
+    min-height: 56px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .fs-header__auth {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .fs-header__role {
+    font-size: 11px;
+  }
+  .fs-header__role strong {
+    font-size: 10px;
+  }
+}

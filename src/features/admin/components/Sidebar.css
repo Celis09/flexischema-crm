@@ -210,3 +210,14 @@
 .fs-sidebar__nav::-webkit-scrollbar       { width: 4px; }
 .fs-sidebar__nav::-webkit-scrollbar-track { background: transparent; }
 .fs-sidebar__nav::-webkit-scrollbar-thumb { background: var(--fs-btn-handle); border-radius: 2px; }
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .fs-sidebar:not(.fs-sidebar--collapsed) {
+    position: absolute;
+    z-index: 1000;
+    height: 100%;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
+  }
+}
