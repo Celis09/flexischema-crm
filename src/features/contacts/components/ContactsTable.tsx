@@ -526,9 +526,9 @@ const ContactsTable = memo(function ContactsTable(props: any) {
           position: "sticky",
           top: 0,
           zIndex: 10,
-          backgroundColor: 'var(--fs-bg-panel, #ffffff)',
-          borderBottom: '1px solid var(--fs-border, #e5e7eb)',
-          borderRight: '1px solid var(--fs-border, #e5e7eb)',
+          backgroundColor: 'var(--fs-surface-header)',
+          borderBottom: '1px solid var(--fs-border)',
+          borderRight: '1px solid var(--fs-border)',
           height: '40px'
         }}>
           {frozenCols.map(colId => {
@@ -607,8 +607,8 @@ const ContactsTable = memo(function ContactsTable(props: any) {
             position: "sticky",
             top: 0,
             zIndex: 10,
-            backgroundColor: 'var(--fs-bg-panel, #ffffff)',
-            borderBottom: '1px solid var(--fs-border, #e5e7eb)',
+            backgroundColor: 'var(--fs-surface-header)',
+            borderBottom: '1px solid var(--fs-border)',
             height: '40px'
           }}>
             {scrollableCols.map(colId => (
