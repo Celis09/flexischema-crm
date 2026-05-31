@@ -136,12 +136,7 @@ const COLUMNS = [
   {
     key: "username", label: "Username", backendKey: "Username", width: 120,
     render: (row) => (
-      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-        <div className="fs-avatar fs-avatar--sm">
-          {(row.performedByUsername || "—")[0].toUpperCase()}
-        </div>
-        {row.performedByUsername || "—"}
-      </div>
+      <span className="fs-uname">{row.performedByUsername || "—"}</span>
     ),
   },
   {
