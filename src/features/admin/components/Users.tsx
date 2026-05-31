@@ -715,7 +715,7 @@ export default function UserManagementPage() {
   return (
     <div className="fs-root" data-theme={theme}>
       <div className="fs-topbar">
-        <div className="fs-logo">FlexiSchema</div>
+        <div className="fs-logo">FlexiSchema <span>CRM</span></div>
       </div>
 
       <div className="fs-action-bar">
