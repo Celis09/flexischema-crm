@@ -192,9 +192,7 @@ export default function ActionSummaries() {
   return (
     <div className="fs-root" data-theme={theme} data-density="compact">
 
-      <div className="fs-page-header">
-        <h1 className="fs-page-title">Action <span>Summaries</span></h1>
-      </div>
+
 
       {/* ── Action bar ── */}
       <div className="fs-action-bar">

@@ -533,9 +533,7 @@ export default function ExtraFieldDefinitions() {
   return (
     <div className="fs-root" data-theme={theme}>
 
-      <div className="fs-page-header">
-        <h1 className="fs-page-title">Extra Field <span>Definitions</span></h1>
-      </div>
+
 
       <div className="fs-action-bar">
         <div className="fs-left-g">

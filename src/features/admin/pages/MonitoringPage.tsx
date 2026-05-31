@@ -3,8 +3,8 @@ import ActionSummaries from "@/features/admin/components/ActionSummaries";
 import AuditLogs from "@/features/admin/components/AuditLogs";
 
 const TABS = [
-  { key: "ActionSummaries", label: "Action Summaries" },
-  { key: "AuditLogs",       label: "Audit Logs" },
+  { key: "ActionSummaries", label: <>Action <span style={{ color: "var(--fs-accent)" }}>Summaries</span></> },
+  { key: "AuditLogs",       label: <>Audit <span style={{ color: "var(--fs-accent)" }}>Logs</span></> },
 ];
 
 export default function MonitoringPage() {
@@ -36,7 +36,7 @@ export default function MonitoringPage() {
               cursor:          "pointer",
               transition:      "background 0.15s, color 0.15s",
               background:      tab === t.key ? "var(--fs-surface-card)"  : "transparent",
-              color:           tab === t.key ? "var(--fs-accent)"        : "var(--fs-text-dim)",
+              color:           tab === t.key ? "var(--fs-text)"        : "var(--fs-text-dim)",
               borderBottom:    tab === t.key ? "2px solid var(--fs-accent)" : "2px solid transparent",
             }}
           >

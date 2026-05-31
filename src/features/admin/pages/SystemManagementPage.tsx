@@ -4,8 +4,8 @@ import ExtraFieldDefinitions from "@/features/admin/components/ExtraFieldDefinit
 import Metrics from "@/features/admin/components/Metrics";
 
 const TABS = [
-  { key: "AdminConfigs",          label: "Admin Configs" },
-  { key: "ExtraFieldDefinitions", label: "Extra Field Definitions" },
+  { key: "AdminConfigs",          label: <>Admin <span style={{ color: "var(--fs-accent)" }}>Configs</span></> },
+  { key: "ExtraFieldDefinitions", label: <>Extra Field <span style={{ color: "var(--fs-accent)" }}>Definitions</span></> },
   { key: "Metrics",               label: "Metrics" },
 ];
 
@@ -37,7 +37,7 @@ export default function SystemManagementPage() {
               cursor:          "pointer",
               transition:      "background 0.15s, color 0.15s",
               background:      tab === t.key ? "var(--fs-surface-card)"     : "transparent",
-              color:           tab === t.key ? "var(--fs-accent)"           : "var(--fs-text-dim)",
+              color:           tab === t.key ? "var(--fs-text)"           : "var(--fs-text-dim)",
               borderBottom:    tab === t.key ? "2px solid var(--fs-accent)" : "2px solid transparent",
             }}
           >
