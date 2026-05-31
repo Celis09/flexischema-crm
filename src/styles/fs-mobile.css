@@ -4,36 +4,15 @@
    ═══════════════════════════════════════════════════════════════════════════ */
 
 @media (max-width: 768px) {
-  /* 1. Ensure grid layouts collapse into 1 column */
-  .fs-grid, 
-  [style*="display: grid"] {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* 2. Flex containers use flex-wrap: wrap */
-  .fs-flex,
-  [style*="display: flex"] {
-    flex-wrap: wrap !important;
-  }
-  
-  /* Prevent header from wrapping awkwardly if it doesn't need to */
-  header, .fs-header {
-    flex-wrap: nowrap !important;
-  }
-
-  /* 3. Replace large fixed width properties with max-width: 100% */
+  /* Safely constrain large modals/drawers */
   .fs-modal,
   .fs-card,
   .fs-drawer,
-  [style*="width: 500px"],
-  [style*="width: 600px"],
-  [style*="width: 400px"],
-  [style*="width: 700px"] {
+  .fs-login-card {
     width: 100% !important;
     max-width: 100% !important;
   }
 
-  /* Additional mobile optimizations */
   .fs-login-card {
     padding: 24px !important;
     width: 95% !important;
@@ -41,12 +20,6 @@
   
   .fs-drawer-panel, .fs-drawer-content {
     width: 100% !important;
-  }
-  
-  .fs-sidebar {
-    position: relative !important;
-    width: 100% !important;
-    height: auto !important;
   }
   
   .fs-layout-main {
