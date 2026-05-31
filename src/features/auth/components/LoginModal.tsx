@@ -86,7 +86,7 @@ export default function LoginModal({ open, onClose, onSuccess }) {
 
           <form onSubmit={handleSubmit} noValidate>
             <div className="fs-login-field">
-              <label htmlFor="lm-username">Username or Email</label>
+              <label htmlFor="lm-username">Username</label>
               <i className="fa-solid fa-user" />
               <input
                 id="lm-username"
