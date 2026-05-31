@@ -288,8 +288,8 @@ export default function AuditLogs() {
   return (
     <div className="fs-root" data-theme={theme} data-density="compact">
 
-      <div className="fs-page-header">
-        <h1 className="fs-page-title">FlexiSchema <span>CRM</span></h1>
+      <div className="fs-topbar">
+        <div className="fs-logo">FlexiSchema</div>
       </div>
 
       {/* ── Action bar ── */}
