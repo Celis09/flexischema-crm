@@ -450,7 +450,7 @@ export default function DefinitionModal({
     <ModalShell
       open={open}
       title={`Manage Options — "${form.fieldName}"`}
-      onClose={handleClose}
+      onClose={handlePhase2Done}
       maxWidth={480}
       footer={<Button variant="primary" onClick={handlePhase2Done}>Done</Button>}
     >
