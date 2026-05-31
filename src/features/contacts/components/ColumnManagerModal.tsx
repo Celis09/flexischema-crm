@@ -184,7 +184,7 @@ export default function ColumnManagerModal({
 
   return createPortal(
     <>
-      <div className="fs-cm-backdrop" onClick={onClose} />
+      <div className="fs-cm-backdrop" />
       <div className="fs-cm-modal" role="dialog" aria-modal="true" aria-labelledby="fs-cm-title">
 
         {/* ── Header ── */}
