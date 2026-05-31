@@ -11,18 +11,9 @@ export default function AdminPage({ userRole, setUserRole, requireLogin }) {
   if (userRole !== "Admin") return null;
 
   return (
-    <div style={{
-      display: "flex",
-      width: "100%",         
-      height: "calc(100vh - 56px)", 
-      overflow: "hidden",
-    }}>
+    <div className="fs-admin-layout">
       <Sidebar />
-      <div style={{
-        flex: 1,
-        padding: 16,
-        overflow: "auto",   
-      }}>
+      <div className="fs-admin-content">
         <Routes>
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="contacts" element={<ContactsPage userRole={userRole} setUserRole={setUserRole} requireLogin={requireLogin} />} />

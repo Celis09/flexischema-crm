@@ -23,6 +23,35 @@
   transition:       background 0.3s, color 0.3s;
 }
 
+/* ─── Admin Layout ───────────────────────────────────────────────────────── */
+.fs-admin-layout {
+  display: flex;
+  width: 100%;
+  height: calc(100vh - 56px);
+  overflow: hidden;
+  position: relative;
+}
+
+.fs-admin-content {
+  flex: 1;
+  padding: 16px;
+  overflow: auto;
+  min-width: 0; /* Prevents flex items from overflowing their container horizontally */
+}
+
+/* Fix fs-root when nested in the admin layout */
+.fs-admin-content .fs-root {
+  min-height: 100%;
+  padding: 8px 0; /* Less padding since the container already has 16px */
+  overflow: visible;
+}
+
+@media (max-width: 768px) {
+  .fs-admin-content {
+    padding: 10px;
+  }
+}
+
 /* Scoped reset — only inside our shell */
 .fs-root * {
   box-sizing: border-box;
