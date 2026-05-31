@@ -116,7 +116,7 @@ export async function exportContacts(format = "csv", opts = {}) {
   if (format === "xlsx") {
     const XLSX = await import("xlsx");
     const csvString = await res.text();
-    const workbook = XLSX.read(csvString, { type: "string" });
+    const workbook = XLSX.read(csvString, { type: "string", raw: true });
     fileName = fileName.replace(/\.csv$/, ".xlsx");
     XLSX.writeFile(workbook, fileName);
     return;
