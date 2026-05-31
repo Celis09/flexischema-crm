@@ -137,7 +137,7 @@ export default function ExportSetupModal({
           <Button variant="cancel" onClick={onClose}>
             Cancel
           </Button>
-          <Button variant="secondary" onClick={() => handleConfirm("csv")} disabled={noneChecked}>
+          <Button variant="cancel" onClick={() => handleConfirm("csv")} disabled={noneChecked}>
             Download CSV
           </Button>
           <Button variant="primary" onClick={() => handleConfirm("xlsx")} disabled={noneChecked}>
