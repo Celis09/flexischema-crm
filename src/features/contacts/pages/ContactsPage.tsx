@@ -369,10 +369,10 @@ function useImportExport(refresh, setPage, showStatus, reloadDefinitions) {
     refresh();
   }, [refresh, setPage, showStatus, reloadDefinitions]);
 
-  const handleExportConfirm = useCallback(async ({ columns, exportSelected }, selectedIds) => {
+  const handleExportConfirm = useCallback(async ({ columns, exportSelected, format }, selectedIds) => {
     setExportModalOpen(false);
     try {
-      await exportContacts("csv", {
+      await exportContacts(format || "csv", {
         columns,
         ids: exportSelected && selectedIds?.length ? selectedIds : undefined,
       });

@@ -257,7 +257,7 @@ export default function ImportModal({ open, onClose, onConfirm }) {
   }
 
   const steps = [
-    { step: 1, label: "Choose a CSV file", done: !!file    },
+    { step: 1, label: "Choose a CSV or Excel file", done: !!file    },
     { step: 2, label: "Preview changes",   done: !!preview },
     { step: 3, label: "Confirm import",    done: false      },
   ];
@@ -332,11 +332,31 @@ export default function ImportModal({ open, onClose, onConfirm }) {
 
       {/* File picker */}
       <div className="fs-field">
-        <label className="fs-label">CSV File</label>
+        <label className="fs-label">CSV or Excel File</label>
         <input
-          type="file" accept=".csv" className="fs-modal-input"
+          type="file" accept=".csv, .xlsx, .xls" className="fs-modal-input"
           style={{ height: "auto", padding: "8px 14px", cursor: "pointer" }}
-          onChange={e => { setFile(e.target.files[0] || null); setPreview(null); setError(""); }}
+          onChange={async e => {
+            let selectedFile = e.target.files[0] || null;
+            if (selectedFile && (selectedFile.name.endsWith(".xlsx") || selectedFile.name.endsWith(".xls"))) {
+              try {
+                const XLSX = await import("xlsx");
+                const data = await selectedFile.arrayBuffer();
+                const workbook = XLSX.read(data, { type: "array" });
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const csvString = XLSX.utils.sheet_to_csv(worksheet);
+                const blob = new Blob([csvString], { type: "text/csv" });
+                selectedFile = new File([blob], selectedFile.name.replace(/\.[^/.]+$/, ".csv"), { type: "text/csv" });
+              } catch (err) {
+                setError("Failed to parse Excel file.");
+                selectedFile = null;
+              }
+            }
+            setFile(selectedFile);
+            setPreview(null);
+            if (!error) setError("");
+          }}
         />
       </div>
 

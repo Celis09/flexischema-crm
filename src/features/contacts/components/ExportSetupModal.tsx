@@ -110,10 +110,10 @@ export default function ExportSetupModal({
   const selectAll   = () => setSelected(new Set(exportable));
   const deselectAll = () => setSelected(new Set());
 
-  const handleConfirm = () => {
+  const handleConfirm = (format) => {
     const ordered = exportable.filter(id => selected.has(id));
     saveExportCols(roleKey, ordered);
-    onConfirm({ columns: ordered, exportSelected });
+    onConfirm({ columns: ordered, exportSelected, format });
   };
 
   // ── Derived ─────────────────────────────────────────────────────────────────
@@ -137,8 +137,11 @@ export default function ExportSetupModal({
           <Button variant="cancel" onClick={onClose}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleConfirm} disabled={noneChecked}>
-            Download CSV →
+          <Button variant="secondary" onClick={() => handleConfirm("csv")} disabled={noneChecked}>
+            Download CSV
+          </Button>
+          <Button variant="primary" onClick={() => handleConfirm("xlsx")} disabled={noneChecked}>
+            Download Excel →
           </Button>
         </>
       }

@@ -40,13 +40,54 @@ export async function importContacts(file, options: any = {}) {
 }
 
 /**
+const API_BASE = API_BASE_URL;
+
+async function postCsvFile(endpoint, file, options: any = {}) {
+  const { autoCreateDefinitions = false, overwriteExisting = false } = options;
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const params = new URLSearchParams({
+    autoCreateDefinitions: String(autoCreateDefinitions),
+    overwriteExisting:     String(overwriteExisting),
+  });
+
+  const res = await fetch(`${API_BASE}${endpoint}?${params}`, {
+    method: "POST",
+    body:   formData,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+    },
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Request failed: ${res.status} ${text}`);
+  }
+
+  return res.json();
+}
+
+// Dry-run — nothing is saved
+export async function previewImport(file, options: any = {}) {
+  return postCsvFile("/api/v1/contacts/import/preview", file, options);
+}
+
+// Real import — saves to DB
+export async function importContacts(file, options: any = {}) {
+  return postCsvFile("/api/v1/contacts/import", file, options);
+}
+
+/**
  * Triggers a CSV (or JSON) download from the server.
  *
- * @param {"csv"|"json"} format
+ * @param {"csv"|"json"|"xlsx"} format
  * @param {{ columns?: string[], ids?: (string|number)[] }} [opts]
  */
 export async function exportContacts(format = "csv", opts = {}) {
-  const params = new URLSearchParams({ format });
+  const backendFormat = format === "xlsx" ? "csv" : format;
+  const params = new URLSearchParams({ format: backendFormat });
 
   if (opts.columns?.length) {
     params.set("columns", opts.columns.join(","));
@@ -68,10 +109,18 @@ export async function exportContacts(format = "csv", opts = {}) {
     throw new Error(text);
   }
 
-  // Derive filename from Content-Disposition if present, otherwise fall back
   const disposition = res.headers.get("Content-Disposition") ?? "";
   const match       = disposition.match(/filename[^;=\n]*=['"]?([^'";\n]+)['"]?/i);
-  const fileName    = match?.[1] ?? `contacts-${new Date().toISOString().slice(0, 10)}.${format}`;
+  let fileName      = match?.[1] ?? `contacts-${new Date().toISOString().slice(0, 10)}.${backendFormat}`;
+
+  if (format === "xlsx") {
+    const XLSX = await import("xlsx");
+    const csvString = await res.text();
+    const workbook = XLSX.read(csvString, { type: "string" });
+    fileName = fileName.replace(/\.csv$/, ".xlsx");
+    XLSX.writeFile(workbook, fileName);
+    return;
+  }
 
   const blob = await res.blob();
   const url  = URL.createObjectURL(blob);
@@ -83,4 +132,3 @@ export async function exportContacts(format = "csv", opts = {}) {
   a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 30_000);
 }
-
