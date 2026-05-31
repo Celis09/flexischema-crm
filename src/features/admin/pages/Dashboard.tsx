@@ -85,6 +85,8 @@ function StatCard({ label, value, color }) {
       padding:       "16px 20px",
       display:       "flex",
       flexDirection: "column",
+      justifyContent:"space-between",
+      height:        "100%",
       gap:           6,
     }}>
       <span style={{
