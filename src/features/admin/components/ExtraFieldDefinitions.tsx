@@ -534,7 +534,7 @@ export default function ExtraFieldDefinitions() {
     <div className="fs-root" data-theme={theme}>
 
       <div className="fs-topbar">
-        <div className="fs-logo">FlexiSchema</div>
+        <div className="fs-logo">Flexi<span>Schema</span></div>
       </div>
 
       <div className="fs-action-bar">

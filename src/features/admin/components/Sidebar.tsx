@@ -48,7 +48,7 @@ export default function Sidebar() {
           <div className="fs-sidebar__logo-icon">
             <i className="fa-solid fa-database" />
           </div>
-          <span className="fs-sidebar__logo-text">FlexiSchema</span>
+          <span className="fs-sidebar__logo-text">Flexi<span style={{ color: "var(--fs-accent)" }}>Schema</span></span>
         </div>
         <button
           className="fs-sidebar__toggle"

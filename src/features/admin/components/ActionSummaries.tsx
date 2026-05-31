@@ -193,7 +193,7 @@ export default function ActionSummaries() {
     <div className="fs-root" data-theme={theme} data-density="compact">
 
       <div className="fs-topbar">
-        <div className="fs-logo">FlexiSchema</div>
+        <div className="fs-logo">Flexi<span>Schema</span></div>
       </div>
 
       {/* ── Action bar ── */}

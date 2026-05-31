@@ -74,7 +74,7 @@ export default function LoginModal({ open, onClose, onSuccess }) {
             <i className="fa-solid fa-xmark" aria-hidden="true" />
           </button>
 
-          <div className="fs-login-logo">FlexiSchema <span>CRM</span></div>
+          <div className="fs-login-logo">Flexi<span>Schema</span> CRM</div>
           <p className="fs-login-subtitle">Please enter your credentials to continue</p>
 
           {errors.general && (
