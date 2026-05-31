@@ -217,6 +217,12 @@
   white-space:   nowrap;
 }
 
+.fs-modal-btn:disabled {
+  opacity: 0.45;
+  cursor:  not-allowed;
+  filter:  grayscale(0.5);
+}
+
 .fs-modal-btn--cancel {
   border:     1px solid var(--fs-btn-border);
   background: var(--fs-btn-bg);

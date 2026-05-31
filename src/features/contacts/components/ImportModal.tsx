@@ -376,8 +376,8 @@ export default function ImportModal({ open, onClose, onConfirm }) {
       {/* Preview button */}
       {file && (
         <div>
-          <Button variant="cancel" onClick={handlePreview} disabled={previewing}>
-            {previewing ? "Loading…" : preview ? "Re-preview" : "Preview"}
+          <Button variant={preview ? "cancel" : "primary"} onClick={handlePreview} disabled={previewing}>
+            {previewing ? "Loading…" : preview ? "Re-preview" : "Step 2: Preview Changes"}
           </Button>
         </div>
       )}
