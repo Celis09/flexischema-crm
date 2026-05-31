@@ -26,11 +26,11 @@ const NON_SORTABLE_COLS = new Set(["select", "sequence", "changeStatus"]);
 const CORE_META = {
   admin: {
     labels: {
-      select: "", sequence: "#", id: "ID", status: "Status",
+      select: "", sequence: "Seq#", id: "ID", status: "Status",
       changeStatus: "Change Status", createdDate: "Created", name: "Name", email: "Email",
     },
     widths: {
-      select: 40, sequence: 52, id: 60, status: 100,
+      select: 40, sequence: 64, id: 60, status: 100,
       changeStatus: 140, createdDate: 140, name: 180, email: 220,
     },
     maxWidths: {

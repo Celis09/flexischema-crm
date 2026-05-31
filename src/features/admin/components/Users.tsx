@@ -548,7 +548,11 @@ export default function UserManagementPage() {
     const protectedCount = actionableUsers.filter(u => protectionReason(u, "status")).length;
 
     if (safeIds.length === 0) {
-      if (alreadyUpdated > 0) {
+      const allProtected = protectedCount === actionableUsers.length;
+      if (allProtected) {
+        const firstProtected = actionableUsers.find(u => protectionReason(u, "status"));
+        showStatus(protectionReason(firstProtected, "status"), "error");
+      } else if (alreadyUpdated > 0) {
         showStatus(`All eligible users are already set to ${newStatus}.`);
         clearSelection();
       } else {
@@ -598,7 +602,11 @@ export default function UserManagementPage() {
     const protectedCount = actionableUsers.filter(u => protectionReason(u, "role")).length;
 
     if (safeIds.length === 0) {
-      if (alreadyUpdated > 0) {
+      const allProtected = protectedCount === actionableUsers.length;
+      if (allProtected) {
+        const firstProtected = actionableUsers.find(u => protectionReason(u, "role"));
+        showStatus(protectionReason(firstProtected, "role"), "error");
+      } else if (alreadyUpdated > 0) {
         showStatus(`All eligible users are already ${newRole}s.`);
         clearSelection();
       } else {
