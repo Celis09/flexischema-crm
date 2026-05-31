@@ -118,8 +118,8 @@ export default function Metrics() {
   return (
     <div className="fs-root" data-theme={theme}>
 
-      <div className="fs-topbar">
-        <div className="fs-logo">Flexi<span>Schema</span></div>
+      <div className="fs-page-header">
+        <h1 className="fs-page-title">Metrics</h1>
       </div>
 
       <div className="fs-action-bar">

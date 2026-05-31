@@ -194,8 +194,8 @@ export default function AdminConfigs() {
   return (
     <div className="fs-root" data-theme={theme}>
 
-      <div className="fs-topbar">
-        <div className="fs-logo">Flexi<span>Schema</span></div>
+      <div className="fs-page-header">
+        <h1 className="fs-page-title">Admin <span>Configs</span></h1>
       </div>
 
       {/* ── Action bar ── */}

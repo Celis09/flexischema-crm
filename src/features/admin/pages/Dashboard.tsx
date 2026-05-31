@@ -433,7 +433,10 @@ export default function Dashboard() {
   }[chartType];
 
   return (
-    <div style={{ padding: 20 }}>
+    <div className="fs-root" style={{ padding: 20 }}>
+      <div className="fs-page-header">
+        <h1 className="fs-page-title">Dashboard</h1>
+      </div>
 
       {/* Toolbar */}
       <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 20, flexWrap: "wrap" }}>
