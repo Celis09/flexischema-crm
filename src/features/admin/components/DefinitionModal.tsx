@@ -430,6 +430,11 @@ export default function DefinitionModal({
             onChange={e => handleChange({ ...form, isActive: e?.target?.checked ?? !form.isActive })}
             label={form.isActive ? "Active" : "Inactive"}
           />
+          {!form.isActive && (
+            <div style={{ fontSize: 12, color: "var(--fs-text-dim)", marginTop: 6 }}>
+              Setting this to inactive will hide it from all contacts.
+            </div>
+          )}
         </FormField>
       </ModalShell>
     );

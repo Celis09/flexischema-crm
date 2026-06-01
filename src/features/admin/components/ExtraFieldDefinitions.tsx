@@ -276,16 +276,36 @@ export default function ExtraFieldDefinitions() {
   async function handleToggle(def) {
     const id = def.extraFieldDefinitionId;
     if (togglingIds.has(id)) return;
-    setTogglingIds(prev => new Set(prev).add(id));
-    try {
-      await toggleDefinitionStatus(id);
-      await load({ isActive });
-      showStatus(`"${def.fieldName}" ${!def.isActive ? "activated" : "deactivated"}.`);
-    } catch (err) {
-      showStatus(err?.message ?? "Status change failed.", "error");
-    } finally {
-      setTogglingIds(prev => { const n = new Set(prev); n.delete(id); return n; });
+
+    const proceed = async () => {
+      setTogglingIds(prev => new Set(prev).add(id));
+      try {
+        await toggleDefinitionStatus(id);
+        await load({ isActive });
+        showStatus(
+          def.isActive 
+            ? `Deactivating "${def.fieldName}" will hide it from all contacts.` 
+            : `"${def.fieldName}" activated.`
+        );
+      } catch (err) {
+        showStatus(err?.message ?? "Status change failed.", "error");
+      } finally {
+        setTogglingIds(prev => { const n = new Set(prev); n.delete(id); return n; });
+      }
+    };
+
+    if (def.isActive) {
+      openConfirm({
+        title: "Deactivate Field",
+        message: `Are you sure you want to deactivate "${def.fieldName}"? This field will no longer appear on contact forms.`,
+        confirmLabel: "Deactivate",
+        danger: true,
+        onConfirm: proceed,
+      });
+      return;
     }
+    
+    await proceed();
   }
 
   async function handleToggleRequired(def, newValue) {
@@ -308,38 +328,63 @@ export default function ExtraFieldDefinitions() {
   function handleBulkToggle(activate) {
     if (selectedIds.length === 0) return;
     setDropOpen(false);
-    const label = activate ? "Activate" : "Deactivate";
-    openConfirm({
-      title:        `${label} Definitions`,
-      message:      `${label} ${selectedIds.length} definition(s)?`,
-      confirmLabel: label,
-      danger:       !activate,
-      onConfirm:    async () => {
-        try {
-          let changedCount = 0;
-          
-          for (const id of selectedIds) {
-            const def = definitions.find(d => d.extraFieldDefinitionId === id);
-            if (!def) continue;
-            
-            if (def.isActive !== activate) {
-              await toggleDefinitionStatus(id);
-              changedCount++;
-            }
+
+    const proceed = async () => {
+      try {
+        let changedCount = 0;
+        for (const id of selectedIds) {
+          const def = definitions.find(d => d.extraFieldDefinitionId === id);
+          if (!def) continue;
+          if (def.isActive !== activate) {
+            await toggleDefinitionStatus(id);
+            changedCount++;
           }
-          
-          await load({ isActive });
-          setSelectedIds([]);
-          
-          if (changedCount === 0) {
-            showStatus(`No changes applied. Selected definition(s) are already ${activate ? "Active" : "Inactive"}.`, "success");
-          } else {
-            showStatus(`${changedCount} definition(s) ${activate ? "activated" : "deactivated"}.`);
-          }
-        } catch (err) {
-          showStatus(err?.message ?? "Bulk action failed.", "error");
         }
-      },
+        await load({ isActive });
+        setSelectedIds([]);
+        if (changedCount === 0) {
+          showStatus(`No changes applied. Selected definition(s) are already ${activate ? "Active" : "Inactive"}.`, "success");
+        } else {
+          showStatus(`${changedCount} definition(s) ${activate ? "activated" : "deactivated"}.`);
+        }
+      } catch (err) {
+        showStatus(err?.message ?? "Bulk action failed.", "error");
+      }
+    };
+
+    if (activate) {
+      openConfirm({
+        title:        "Activate Definitions",
+        message:      `Activate ${selectedIds.length} definition(s)?`,
+        confirmLabel: "Activate",
+        danger:       false,
+        onConfirm:    proceed,
+      });
+      return;
+    }
+
+    const actionableDefs = selectedIds.map(id => definitions.find(d => d.extraFieldDefinitionId === id)).filter(Boolean);
+
+    openConfirm({
+      title: "Deactivate Fields",
+      message: (
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <div>Are you sure you want to deactivate the following fields?</div>
+          {actionableDefs.length <= 5 ? (
+            <ul style={{ margin: 0, paddingLeft: 20 }}>
+              {actionableDefs.map(d => (
+                <li key={d.extraFieldDefinitionId}><strong>{d.fieldName}</strong></li>
+              ))}
+            </ul>
+          ) : (
+            <div><strong>{actionableDefs.length} fields selected</strong></div>
+          )}
+          <div>These fields will no longer appear on contact forms.</div>
+        </div>
+      ),
+      confirmLabel: "Deactivate",
+      danger: true,
+      onConfirm: proceed,
     });
   }
 
