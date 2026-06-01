@@ -2,6 +2,8 @@
 
 A modern, highly-performant Contact Management and CRM application built with React, TypeScript, and Vite. This application demonstrates scalable frontend architecture, robust state management, and optimized rendering techniques suitable for enterprise environments.
 
+> **[PLACEHOLDER: Add a screenshot of the main Contacts Table / Dashboard here. e.g., `![Main Dashboard](./docs/screenshot-main.png)`]**
+
 
 ## ✨ Key Features
 
@@ -21,6 +23,8 @@ A modern, highly-performant Contact Management and CRM application built with Re
 - **Virtualization:** `@tanstack/react-virtual`
 - **Drag & Drop:** `@hello-pangea/dnd`
 - **Testing:** Vitest, React Testing Library, JSDOM
+
+> **[PLACEHOLDER: Add a GIF or screenshot showing the drag-and-drop column ordering or the dynamic drawer opening here. e.g., `![Drag and Drop](./docs/demo-dnd.gif)`]**
 
 
 ## 📂 Project Architecture
@@ -74,6 +78,8 @@ src/
    ```bash
    npm run dev
    ```
+
+> **[PLACEHOLDER: Add a screenshot of the Admin Dashboard showing metrics here. e.g., `![Admin Dashboard](./docs/screenshot-admin.png)`]**
 
 
 ## 🧪 Testing
