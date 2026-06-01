@@ -8,7 +8,7 @@ import { login } from "@/features/auth/api/AuthApi";
 import { parseLoginErrors } from "@/lib/index";
 import "./LoginModal.css";
 
-const DEMO_PASSWORD = import.meta.env.VITE_DEMO_PASSWORD || "";
+const DEMO_PASSWORD = import.meta.env.VITE_DEMO_PASSWORD || (import.meta.env.DEV ? "Password@123" : "");
 
 export default function LoginModal({ open, onClose, onSuccess }) {
   useFlexiSchemaCSS();
