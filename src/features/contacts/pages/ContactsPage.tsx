@@ -892,17 +892,6 @@ export default function ContactsPage({ userRole, requireLogin }) {
             loading={loading}
           />
         </div>
-        {!loading && contacts.length === 0 && (
-          <div className="fs-state-row" style={{
-            padding: '1rem',
-            textAlign: 'center',
-            color: 'var(--fs-text-dim, #6b7280)',
-            fontStyle: 'italic',
-            borderTop: '1px solid var(--fs-border, #e5e7eb)'
-          }}>
-            No contacts found.
-          </div>
-        )}
       </div>
 
       <Pagination

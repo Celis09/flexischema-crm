@@ -496,6 +496,8 @@ const ContactsTable = memo(function ContactsTable(props: any) {
     initialRect: { width: 800, height: 800 },
   });
 
+  const gridHeight = Math.max(rowVirtualizer.getTotalSize(), (!loading && displayContacts.length === 0) ? 60 : 0) + 40;
+
   return (
     <div
       className="fs-grid-wrapper"
@@ -517,7 +519,7 @@ const ContactsTable = memo(function ContactsTable(props: any) {
         style={{ 
           ...frozenPaneStyle,
           position: "relative",
-          height: `${rowVirtualizer.getTotalSize() + 40}px` 
+          height: `${gridHeight}px` 
         }}
       >
         <div style={{
@@ -599,7 +601,7 @@ const ContactsTable = memo(function ContactsTable(props: any) {
         <div className="fs-scroll-grid" style={{ 
           ...scrollGridStyle,
           position: "relative",
-          height: `${rowVirtualizer.getTotalSize() + 40}px`
+          height: `${gridHeight}px`
         }}>
           <div style={{
             display: "grid", 
@@ -649,6 +651,25 @@ const ContactsTable = memo(function ContactsTable(props: any) {
           })}
         </div>
       </div>
+
+      {!loading && displayContacts.length === 0 && (
+        <div style={{
+          position: 'absolute',
+          top: 40,
+          left: 0,
+          right: 0,
+          height: '60px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'var(--fs-text-dim, #6b7280)',
+          fontStyle: 'italic',
+          zIndex: 10,
+          pointerEvents: 'none'
+        }}>
+          No contacts found.
+        </div>
+      )}
     </div>
   );
 });
