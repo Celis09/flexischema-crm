@@ -400,6 +400,13 @@ export default function ContactsPage({ userRole, requireLogin }) {
   const canAdd     = ["Admin", "Editor"].includes(userRole);
   const canEdit    = canAdd;
 
+  const [statusMessage, setStatusMessage] = useState("");
+  const [statusType,    setStatusType]    = useState<"success"|"error">("success");
+  const showStatus = useStatusMessage(setStatusMessage, setStatusType);
+
+  const showStatusRef = useRef(showStatus);
+  useEffect(() => { showStatusRef.current = showStatus; }, [showStatus]);
+
   const {
     definitions, contacts,
     page, totalCount, setPage,
@@ -407,16 +414,14 @@ export default function ContactsPage({ userRole, requireLogin }) {
     loadContacts, createContact, saveContact,
     loadDefinitions,
     loading,
-  } = useContacts(roleConfig.key, 1, { status: isAdmin ? undefined : "Active" });
+  } = useContacts(roleConfig.key, 1, { status: isAdmin ? undefined : "Active" }, (msg) => {
+    showStatusRef.current(msg, "error");
+  });
 
   const activeDefinitions = useMemo(
     () => definitions.filter(d => d.isActive),
     [definitions]
   );
-
-  const [statusMessage, setStatusMessage] = useState("");
-  const [statusType,    setStatusType]    = useState("success");
-  const showStatus = useStatusMessage(setStatusMessage, setStatusType);
 
   const colConfig = useColumnConfig(roleConfig, activeDefinitions, isAdmin);
 
@@ -467,14 +472,11 @@ export default function ContactsPage({ userRole, requireLogin }) {
   const sortConfigRef = useRef(sortConfig);
   const contactsRef   = useRef(contacts);
 
-  const showStatusRef = useRef(showStatus);
-  useEffect(() => { showStatusRef.current = showStatus; }, [showStatus]);
+  const filters = useContactFilters(loadContacts, setPage, () => sortConfigRef.current, isAdmin);
 
   useLayoutEffect(() => {
     contactsRef.current = contacts;
   }, [contacts]);
-
-  const filters = useContactFilters(loadContacts, setPage, () => sortConfigRef.current, isAdmin);
 
   const { drawerColumnOrder, handleDrawerReorder } = useDrawerConfig(
     roleConfig.key,

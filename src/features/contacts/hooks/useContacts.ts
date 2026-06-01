@@ -25,7 +25,7 @@ try {
   if (local) cachedDefinitions = JSON.parse(local);
 } catch { /* ignore */ }
 
-export default function useContacts(roleKey = "default", initialPage = 1, defaultFilters = {}) {
+export default function useContacts(roleKey = "default", initialPage = 1, defaultFilters = {}, onError = null) {
   const pageSizeKey = `fs-contacts-page-size-${roleKey}`;
   const [definitions, setDefinitions] = useState(cachedDefinitions || []);
   const [contacts, setContacts] = useState([]);
@@ -174,9 +174,17 @@ export default function useContacts(roleKey = "default", initialPage = 1, defaul
         definitionsRef.current = merged;
       }
       // -------------------------------
-    } catch (err) {
+    } catch (err: any) {
       if (cancelled) return;
       console.error("Failed to load contacts:", err);
+      if (onError) {
+        if (err.errors) {
+          const firstKey = Object.keys(err.errors)[0];
+          onError(err.errors[firstKey][0]);
+        } else {
+          onError(err.message || "Failed to load contacts.");
+        }
+      }
     } finally {
       if (!cancelled) setLoading(false);
     }
