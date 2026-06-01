@@ -4,6 +4,7 @@ import { useFlexiSchemaCSS } from "@/hooks/useFlexiSchemaCSS";
 import { useTheme } from "@/hooks/useTheme";
 import { getAdminConfigs, updateAdminConfig } from "@/features/admin/api/AdminConfigApi";
 import AdminConfigModal from "@/features/admin/components/AdminConfigModal";
+import ConfirmModal from "@/features/contacts/components/ConfirmModal";
 import ResizableTable from "@/components/ResizableTable";
 import "@/styles/fs-tokens.css";
 import "@/styles/fs-base.css";
@@ -43,6 +44,14 @@ export default function AdminConfigs() {
   const [isModalOpen,   setIsModalOpen]   = useState(false);
   const [form,          setForm]          = useState({});
   const [formErrors,    setFormErrors]    = useState({});
+
+  const [confirmOpen,   setConfirmOpen]   = useState(false);
+  const [confirmConfig, setConfirmConfig] = useState({ title: "", message: "", confirmLabel: "Confirm", danger: false, onConfirm: () => {} });
+
+  const openConfirm = useCallback(({ title, message, confirmLabel, danger, onConfirm }) => {
+    setConfirmConfig({ title, message, confirmLabel, danger, onConfirm });
+    setConfirmOpen(true);
+  }, []);
 
   const toastTimerRef = useRef(null);
 
@@ -118,17 +127,42 @@ export default function AdminConfigs() {
     }
   }
 
-  // ── Inline boolean toggle — no modal needed ───────────────────────────────
+  // ── Inline boolean toggle ───────────────────────────────
   async function handleToggle(config) {
-    const newValue = config.value === "true" ? "false" : "true";
-    const payload  = { ...config, value: newValue };
-    try {
-      await updateAdminConfig(config.id, payload);
-      setConfigs(prev => prev.map(c => c.id === config.id ? payload : c));
-      showStatus(`${config.key} set to ${newValue}.`);
-    } catch {
-      showStatus("Toggle failed.", "error");
+    const isDisabling = config.value === "true";
+    const newValue    = isDisabling ? "false" : "true";
+    const payload     = { ...config, value: newValue };
+
+    // E.g., "AllowPublicRegistration" -> "Allow Public Registration"
+    const humanKey = config.key.replace(/([A-Z])/g, ' $1').trim();
+
+    const proceed = async () => {
+      try {
+        await updateAdminConfig(config.id, payload);
+        setConfigs(prev => prev.map(c => c.id === config.id ? payload : c));
+        showStatus(`"${humanKey}" has been ${isDisabling ? "disabled" : "enabled"}.`);
+      } catch {
+        showStatus("Toggle failed.", "error");
+      }
+    };
+
+    if (isDisabling) {
+      openConfirm({
+        title: `Disable ${humanKey}`,
+        message: (
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <div>Are you sure you want to disable <strong>{humanKey}</strong>?</div>
+            <div>{config.description}</div>
+          </div>
+        ),
+        confirmLabel: "Disable",
+        danger: true,
+        onConfirm: proceed,
+      });
+      return;
     }
+
+    await proceed();
   }
 
   const sorted = useMemo(() => [...configs]
@@ -276,7 +310,16 @@ export default function AdminConfigs() {
         onClose={() => { setIsModalOpen(false); setFormErrors({}); }}
         errors={formErrors}
       />
+
+      <ConfirmModal
+        open={confirmOpen}
+        title={confirmConfig.title}
+        message={confirmConfig.message}
+        confirmLabel={confirmConfig.confirmLabel || "Confirm"}
+        danger={confirmConfig.danger || false}
+        onConfirm={confirmConfig.onConfirm}
+        onClose={() => setConfirmOpen(false)}
+      />
     </div>
   );
 }
-
