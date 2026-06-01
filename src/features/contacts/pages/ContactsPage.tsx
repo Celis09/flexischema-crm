@@ -272,9 +272,9 @@ function useContactFilters(loadContacts, setPage, getSort, isAdmin) {
     setPage(1);
     const { key: sortBy, direction: sortOrder } = getSort();
     loadContacts(filterRef.current.searchTerm, {
-      status:   val                            || undefined,
-      fromDate: filterRef.current.fromDate     || undefined,
-      toDate:   filterRef.current.toDate       || undefined,
+      status:   isAdmin ? (val || undefined) : "Active",
+      fromDate: isAdmin ? (filterRef.current.fromDate || undefined) : undefined,
+      toDate:   isAdmin ? (filterRef.current.toDate || undefined) : undefined,
     }, { sortBy, sortOrder });
   }
 
@@ -295,9 +295,9 @@ function useContactFilters(loadContacts, setPage, getSort, isAdmin) {
       setPage(1);
       const { key: sortBy, direction: sortOrder } = getSort();
       loadContacts(filterRef.current.searchTerm, {
-        status:   filterRef.current.filterStatus || undefined,
-        fromDate: filterRef.current.fromDate     || undefined,
-        toDate:   val                            || undefined,
+        status:   isAdmin ? (filterRef.current.filterStatus || undefined) : "Active",
+        fromDate: isAdmin ? (filterRef.current.fromDate || undefined) : undefined,
+        toDate:   isAdmin ? (val || undefined) : undefined,
       }, { sortBy, sortOrder });
     }
   }
@@ -310,9 +310,9 @@ function useContactFilters(loadContacts, setPage, getSort, isAdmin) {
     setPage(1);
     const { key: sortBy, direction: sortOrder } = getSort();
     loadContacts(filterRef.current.searchTerm, {
-      status:   filterRef.current.filterStatus || undefined,
-      fromDate: fd || undefined,
-      toDate:   td || undefined,
+      status:   isAdmin ? (filterRef.current.filterStatus || undefined) : "Active",
+      fromDate: isAdmin ? (fd || undefined) : undefined,
+      toDate:   isAdmin ? (td || undefined) : undefined,
     }, { sortBy, sortOrder });
   }
 
@@ -321,9 +321,9 @@ function useContactFilters(loadContacts, setPage, getSort, isAdmin) {
     loadWithSortImplRef.current = (sortBy, sortOrder) => {
       const { searchTerm: st, filterStatus: status, fromDate: fd, toDate: td } = filterRef.current;
       loadContacts(st, {
-        status:   status || undefined,
-        fromDate: fd     || undefined,
-        toDate:   td     || undefined,
+        status:   isAdmin ? (status || undefined) : "Active",
+        fromDate: isAdmin ? (fd || undefined) : undefined,
+        toDate:   isAdmin ? (td || undefined) : undefined,
       }, { sortBy, sortOrder });
     };
   });
