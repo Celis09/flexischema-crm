@@ -574,10 +574,10 @@ export default function ContactsPage({ userRole, requireLogin }) {
   // ─── Confirm modal state ──────────────────────────────────────────────────
 
   const [confirmOpen,    setConfirmOpen]    = useState(false);
-  const [confirmConfig,  setConfirmConfig]  = useState({ title: "", message: "", onConfirm: () => {} });
+  const [confirmConfig,  setConfirmConfig]  = useState({ title: "", message: "", confirmLabel: "Confirm", danger: false, onConfirm: () => {} });
 
-  const openConfirm = useCallback(({ title, message, onConfirm }) => {
-    setConfirmConfig({ title, message, onConfirm });
+  const openConfirm = useCallback(({ title, message, confirmLabel, danger, onConfirm }) => {
+    setConfirmConfig({ title, message, confirmLabel, danger, onConfirm });
     setConfirmOpen(true);
   }, []);
 
@@ -604,10 +604,22 @@ export default function ContactsPage({ userRole, requireLogin }) {
     };
 
     if (newStatus === "Inactive" || newStatus === "Archived") {
+      const isArchived = newStatus === "Archived";
+      const consequence = isArchived
+        ? "This contact will be hidden from normal views and functionally deactivated."
+        : "This contact will be deactivated until restored.";
+
       openConfirm({
         title:   `Set to ${newStatus}`,
-        message: `Are you sure you want to change ${contact?.firstName ?? "this contact"}'s status to ${newStatus}?`,
-        onConfirm: proceed,
+        message: (
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <div>Are you sure you want to change <strong>{contact?.name || contact?.firstName || "this contact"}</strong> ({contact?.email || "No email"})'s status to {newStatus}?</div>
+            <div>{consequence}</div>
+          </div>
+        ),
+        confirmLabel: isArchived ? "Archive" : "Set to Inactive",
+        danger:       isArchived,
+        onConfirm:    proceed,
       });
       return;
     }
@@ -629,24 +641,54 @@ export default function ContactsPage({ userRole, requireLogin }) {
       return;
     }
 
+    const proceed = async () => {
+      try {
+        await Promise.all(
+          idsToUpdate.map(id => {
+            const contact = contactsRef.current.find(c => String(c.id) === String(id));
+            return changeContactStatus(contact?.id ?? id, newStatus);
+          })
+        );
+        setSelectedIds([]);
+        filters.refresh();
+        showStatus(`${idsToUpdate.length} contact(s) set to ${newStatus}.`);
+      } catch (err) {
+        showStatus(err?.message ?? "Bulk status change failed.", "error");
+      }
+    };
+
+    if (newStatus === "Active") {
+      proceed();
+      return;
+    }
+
+    const isArchived = newStatus === "Archived";
+    const consequence = isArchived
+      ? "These contacts will be hidden from normal views and functionally deactivated."
+      : "These contacts will be deactivated until restored.";
+
+    const safeContacts = idsToUpdate.map(id => contactsRef.current.find(c => String(c.id) === String(id))).filter(Boolean);
+
     openConfirm({
       title:   `Set to ${newStatus}`,
-      message: `Set ${idsToUpdate.length} contact(s) to ${newStatus}?`,
-      onConfirm: async () => {
-        try {
-          await Promise.all(
-            idsToUpdate.map(id => {
-              const contact = contactsRef.current.find(c => String(c.id) === String(id));
-              return changeContactStatus(contact?.id ?? id, newStatus);
-            })
-          );
-          setSelectedIds([]);
-          filters.refresh();
-          showStatus(`${idsToUpdate.length} contact(s) set to ${newStatus}.`);
-        } catch (err) {
-          showStatus(err?.message ?? "Bulk status change failed.", "error");
-        }
-      },
+      message: (
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <div>Are you sure you want to change the status of the following contacts to {newStatus}?</div>
+          {safeContacts.length <= 5 ? (
+            <ul style={{ margin: 0, paddingLeft: 20 }}>
+              {safeContacts.map(c => (
+                <li key={c.id}><strong>{c.name || c.firstName || "Unknown"}</strong> ({c.email || "No email"})</li>
+              ))}
+            </ul>
+          ) : (
+            <div><strong>{safeContacts.length} contacts selected</strong></div>
+          )}
+          <div>{consequence}</div>
+        </div>
+      ),
+      confirmLabel: isArchived ? "Archive" : "Set to Inactive",
+      danger:       isArchived,
+      onConfirm:    proceed,
     });
   }, [requireLogin, showStatus, filters, setSelectedIds, openConfirm, selectedIdsRef]);
 
@@ -891,8 +933,8 @@ export default function ContactsPage({ userRole, requireLogin }) {
         open={confirmOpen}
         title={confirmConfig.title}
         message={confirmConfig.message}
-        confirmLabel="Yes, apply"
-        danger={true}
+        confirmLabel={confirmConfig.confirmLabel || "Confirm"}
+        danger={confirmConfig.danger || false}
         onConfirm={confirmConfig.onConfirm}
         onClose={() => setConfirmOpen(false)}
       />
