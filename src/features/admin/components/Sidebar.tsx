@@ -33,9 +33,9 @@ export default function Sidebar() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
     localStorage.removeItem("role");
-    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("username");
+    localStorage.removeItem("userId");
     window.location.href = "/";
   };
 

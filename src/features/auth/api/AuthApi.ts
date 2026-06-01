@@ -24,28 +24,29 @@ export async function login(credentials) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(credentials),
+    credentials: "include",
   });
 
   if (!res.ok) await throwWithBody(res);
   return res.json();
 }
 
-export async function refresh(refreshToken) {
+export async function refresh() {
   const res = await fetch(`${API_BASE_URL}/api/v1/auth/refresh`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ refreshToken }),
+    credentials: "include",
   });
 
   if (!res.ok) throw new Error("Refresh failed");
   return res.json();
 }
 
-export async function logout(refreshToken) {
+export async function logout() {
   await fetch(`${API_BASE_URL}/api/v1/auth/logout`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ refreshToken }),
+    credentials: "include",
   });
 }
 

@@ -16,49 +16,7 @@ async function postCsvFile(endpoint, file, options: any = {}) {
   const res = await fetch(`${API_BASE}${endpoint}?${params}`, {
     method: "POST",
     body:   formData,
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
-    },
-  });
-
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`Request failed: ${res.status} ${text}`);
-  }
-
-  return res.json();
-}
-
-// Dry-run — nothing is saved
-export async function previewImport(file, options: any = {}) {
-  return postCsvFile("/api/v1/contacts/import/preview", file, options);
-}
-
-// Real import — saves to DB
-export async function importContacts(file, options: any = {}) {
-  return postCsvFile("/api/v1/contacts/import", file, options);
-}
-
-/**
-const API_BASE = API_BASE_URL;
-
-async function postCsvFile(endpoint, file, options: any = {}) {
-  const { autoCreateDefinitions = false, overwriteExisting = false } = options;
-
-  const formData = new FormData();
-  formData.append("file", file);
-
-  const params = new URLSearchParams({
-    autoCreateDefinitions: String(autoCreateDefinitions),
-    overwriteExisting:     String(overwriteExisting),
-  });
-
-  const res = await fetch(`${API_BASE}${endpoint}?${params}`, {
-    method: "POST",
-    body:   formData,
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
-    },
+    credentials: "include",
   });
 
   if (!res.ok) {
@@ -99,9 +57,7 @@ export async function exportContacts(format = "csv", opts = {}) {
 
   const res = await fetch(`${API_BASE}/api/v1/contacts/export?${params.toString()}`, {
     method: "GET",
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
-    },
+    credentials: "include",
   });
 
   if (!res.ok) {

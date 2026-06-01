@@ -12,9 +12,9 @@ export default function Header({ userRole, setUserRole, onLoginClick }) {
   const { theme, toggleTheme } = useTheme();
 
   function handleLogout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("refreshToken");
     localStorage.removeItem("role");
+    localStorage.removeItem("username");
+    localStorage.removeItem("userId");
     setUserRole(null);
   }
 

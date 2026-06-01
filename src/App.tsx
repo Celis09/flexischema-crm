@@ -78,7 +78,6 @@ export default function App() {
           open={isLoginOpen}
           onClose={() => setIsLoginOpen(false)}
           onSuccess={role => {
-            localStorage.setItem("role", role);
             setUserRole(role);
             setIsLoginOpen(false);
             if (role === "Admin") {

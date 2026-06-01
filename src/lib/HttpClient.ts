@@ -8,43 +8,30 @@
 import API_BASE_URL from "../config";
 import { refresh } from "../features/auth/api/AuthApi";
 
-async function tryRefresh(): Promise<string> {
-  const refreshToken = localStorage.getItem("refreshToken");
-  if (!refreshToken) throw new Error("No refresh token");
-
-  const { token, refreshToken: newRefresh } = await refresh(refreshToken);
-  localStorage.setItem("token", token);
-  localStorage.setItem("refreshToken", newRefresh);
-  return token;
+async function tryRefresh(): Promise<void> {
+  await refresh();
 }
 
 export async function apiFetch(path: string, options: RequestInit = {}): Promise<any> {
-  let token = localStorage.getItem("token");
-
   let headers: HeadersInit = {
     "Content-Type": "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...options.headers,
   };
 
   let res = await fetch(`${API_BASE_URL}${path}`, {
     ...options,
     headers,
+    credentials: "include",
   });
 
   // If unauthorized, try refreshing once
   if (res.status === 401) {
     try {
-      token = await tryRefresh();
-      headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-        ...options.headers,
-      };
-
+      await tryRefresh();
       res = await fetch(`${API_BASE_URL}${path}`, {
         ...options,
         headers,
+        credentials: "include",
       });
     } catch {
       throw new Error("Unauthorized - refresh failed");

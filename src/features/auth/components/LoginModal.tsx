@@ -2,12 +2,13 @@
  * modals/LoginModal.tsx
  */
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useFlexiSchemaCSS } from "@/hooks/useFlexiSchemaCSS";
 import { login } from "@/features/auth/api/AuthApi";
-import { jwtDecode } from "jwt-decode";
 import { parseLoginErrors } from "@/lib/index";
 import "./LoginModal.css";
+
+const DEMO_PASSWORD = import.meta.env.VITE_DEMO_PASSWORD || "";
 
 export default function LoginModal({ open, onClose, onSuccess }) {
   useFlexiSchemaCSS();
@@ -15,36 +16,55 @@ export default function LoginModal({ open, onClose, onSuccess }) {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const passwordRef = useRef<HTMLInputElement>(null);
 
   if (!open) return null;
 
   function patch(key, value) {
     setCredentials(prev => ({ ...prev, [key]: value }));
+    // Clear errors when user starts retyping
+    setErrors(prev => {
+      const next = { ...prev };
+      delete next[key];
+      delete next.general;
+      return next;
+    });
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
+
+    // Client-side empty field validation
+    const validationErrors: Record<string, string> = {};
+    if (!credentials.username.trim()) validationErrors.username = "Username is required.";
+    if (!credentials.password.trim()) validationErrors.password = "Password is required.";
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
     setErrors({});
     setLoading(true);
     try {
-      const { token, refreshToken } = await login(credentials);
+      const data = await login(credentials);
 
-      localStorage.setItem("token", token);
-      localStorage.setItem("refreshToken", refreshToken);
+      // Read username/role/userId from the login response JSON
+      const role = data.role
+        ? data.role.charAt(0).toUpperCase() + data.role.slice(1).toLowerCase()
+        : null;
 
-      const decoded = jwtDecode(token);
-      const rawRole = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
-
-      if (!rawRole) {
-        setErrors({ general: "No role found in token." });
+      if (!role) {
+        setErrors({ general: "No role found in login response." });
         return;
       }
 
-      const normalizedRole =
-        rawRole.charAt(0).toUpperCase() + rawRole.slice(1).toLowerCase();
+      // Store user info in localStorage for UI display only
+      // (auth tokens are now in httpOnly cookies)
+      localStorage.setItem("role", role);
+      if (data.username) localStorage.setItem("username", data.username);
+      if (data.userId != null) localStorage.setItem("userId", String(data.userId));
 
-      localStorage.setItem("role", normalizedRole);
-      onSuccess(normalizedRole);
+      onSuccess(role);
       onClose();
     } catch (err) {
       // err.errors may be a string[] from the backend, or err.message a plain string
@@ -56,12 +76,6 @@ export default function LoginModal({ open, onClose, onSuccess }) {
   }
 
   return (
-    <>
-      <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-      />
-
       <div className="fs-login-overlay">
         <div className="fs-login-card">
 
@@ -69,6 +83,7 @@ export default function LoginModal({ open, onClose, onSuccess }) {
             type="button"
             className="fs-login-btn-close"
             onClick={onClose}
+            disabled={loading}
             aria-label="Close"
           >
             <i className="fa-solid fa-xmark" aria-hidden="true" />
@@ -95,6 +110,12 @@ export default function LoginModal({ open, onClose, onSuccess }) {
                 value={credentials.username}
                 autoComplete="username"
                 onChange={e => patch("username", e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    passwordRef.current?.focus();
+                  }
+                }}
               />
               {errors.username && (
                 <span className="fs-login-field-error">
@@ -109,6 +130,7 @@ export default function LoginModal({ open, onClose, onSuccess }) {
               <i className="fa-solid fa-lock" />
               <input
                 id="lm-password"
+                ref={passwordRef}
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
                 value={credentials.password}
@@ -155,13 +177,13 @@ export default function LoginModal({ open, onClose, onSuccess }) {
             <div className="fs-login-demo-actions">
               <button
                 type="button"
-                onClick={() => setCredentials({ username: "admin", password: "Password@123" })}
+                onClick={() => setCredentials({ username: "admin", password: DEMO_PASSWORD })}
               >
                 Admin
               </button>
               <button
                 type="button"
-                onClick={() => setCredentials({ username: "editor", password: "Password@123" })}
+                onClick={() => setCredentials({ username: "editor", password: DEMO_PASSWORD })}
               >
                 Editor
               </button>
@@ -170,6 +192,5 @@ export default function LoginModal({ open, onClose, onSuccess }) {
 
         </div>
       </div>
-    </>
   );
 }
