@@ -2,7 +2,6 @@
 
 A modern, highly-performant Contact Management and CRM application built with React, TypeScript, and Vite. This application demonstrates scalable frontend architecture, robust state management, and optimized rendering techniques suitable for enterprise environments.
 
-> **[PLACEHOLDER: Add a screenshot of the main Contacts Table / Dashboard here. e.g., `![Main Dashboard](./docs/screenshot-main.png)`]**
 
 ## ✨ Key Features
 
@@ -23,15 +22,19 @@ A modern, highly-performant Contact Management and CRM application built with Re
 - **Drag & Drop:** `@hello-pangea/dnd`
 - **Testing:** Vitest, React Testing Library, JSDOM
 
-> **[PLACEHOLDER: Add a GIF or screenshot showing the drag-and-drop column ordering or the dynamic drawer opening here. e.g., `![Drag and Drop](./docs/demo-dnd.gif)`]**
 
 ## 📂 Project Architecture
 
 The application is built using a decoupled architecture, meaning this repository contains only the React frontend. 
 
-> **Backend API Repository:**  
-> The backend server that powers this application (handling databases, authentication, and endpoints) is located in a separate repository.  
-> 👉 **[PLACEHOLDER: Add a link to your Backend GitHub Repository here. e.g., `[View Backend Repository](https://github.com/...)`]**
+## 🌐 Live Environments
+
+| Layer    | URL                                                              |
+|----------|------------------------------------------------------------------|
+| Backend  | [http://flexischemacrm.runasp.net](http://flexischemacrm.runasp.net) |
+| Frontend | [https://flexischema-crm-tawny.vercel.app](https://flexischema-crm-tawny.vercel.app) |
+| Swagger  | [http://flexischemacrm.runasp.net/swagger](http://flexischemacrm.runasp.net/swagger) |
+| Health   | [http://flexischemacrm.runasp.net/health](http://flexischemacrm.runasp.net/health) |
 
 This project utilizes a **Feature-Based Architecture** on the frontend to ensure clean separation of concerns:
 
@@ -58,7 +61,7 @@ src/
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/contacts-app.git
+   git clone https://github.com/Celis09/flexischema-crm.git
    cd contacts-app
    ```
 
@@ -72,7 +75,6 @@ src/
    npm run dev
    ```
 
-> **[PLACEHOLDER: Add a screenshot of the Admin Dashboard showing metrics here. e.g., `![Admin Dashboard](./docs/screenshot-admin.png)`]**
 
 ## 🧪 Testing
 
