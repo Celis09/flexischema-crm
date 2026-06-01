@@ -407,7 +407,7 @@ export default function ContactsPage({ userRole, requireLogin }) {
     loadContacts, createContact, saveContact,
     loadDefinitions,
     loading,
-  } = useContacts(roleConfig.key);
+  } = useContacts(roleConfig.key, 1, { status: isAdmin ? undefined : "Active" });
 
   const activeDefinitions = useMemo(
     () => definitions.filter(d => d.isActive),

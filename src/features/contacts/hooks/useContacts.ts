@@ -25,7 +25,7 @@ try {
   if (local) cachedDefinitions = JSON.parse(local);
 } catch { /* ignore */ }
 
-export default function useContacts(roleKey = "default", initialPage = 1) {
+export default function useContacts(roleKey = "default", initialPage = 1, defaultFilters = {}) {
   const pageSizeKey = `fs-contacts-page-size-${roleKey}`;
   const [definitions, setDefinitions] = useState(cachedDefinitions || []);
   const [contacts, setContacts] = useState([]);
@@ -200,7 +200,7 @@ export default function useContacts(roleKey = "default", initialPage = 1) {
   useEffect(() => {
     async function initializeData() {
       const freshDefs = await loadDefinitions();
-      await loadContacts("", {}, { 
+      await loadContacts("", defaultFilters, { 
         page: pageRef.current, 
         pageSize: pageSizeRef.current,
         explicitDefs: freshDefs 
