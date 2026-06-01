@@ -63,14 +63,14 @@ export default function ConfirmModal({
         </>
       }
     >
-      <p style={{
+      <div style={{
         fontSize:   13,
         color:      "var(--fs-text-dim)",
         lineHeight: 1.6,
         margin:     0,
       }}>
         {message}
-      </p>
+      </div>
     </ModalShell>
   );
 } 

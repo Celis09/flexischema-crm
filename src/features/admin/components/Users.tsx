@@ -514,18 +514,28 @@ export default function UserManagementPage() {
       try {
         await changeUserStatus(userId, newStatus);
         setUsers(prev => prev.map(u => u.userId === userId ? { ...u, status: newStatus } : u));
-        showStatus(`User set to ${newStatus}.`);
+        showStatus(`${user?.username} has been set to ${newStatus}.`);
       } catch (err) {
         showStatus(err?.message ?? "Status change failed.", "error");
       }
     };
 
-    if (newStatus === "Suspended") {
+    if (newStatus === "Suspended" || newStatus === "Inactive") {
+      const isSuspended = newStatus === "Suspended";
+      const consequence = isSuspended 
+        ? "Their account will be immediately disabled and access will be revoked."
+        : "They will not be able to log in until reactivated.";
+
       openConfirm({
-        title:        "Suspend User",
-        message:      `Suspend ${user?.username}?`,
-        confirmLabel: "Suspend",
-        danger:       true,
+        title:        isSuspended ? "Suspend User" : "Deactivate User",
+        message: (
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <div>Are you sure you want to {isSuspended ? "suspend" : "deactivate"} <strong>{user?.username}</strong> ({user?.email})?</div>
+            <div>{consequence}</div>
+          </div>
+        ),
+        confirmLabel: isSuspended ? "Suspend" : "Set to Inactive",
+        danger:       isSuspended,
         onConfirm:    proceed,
       });
       return;
@@ -568,22 +578,48 @@ export default function UserManagementPage() {
     if (protectedCount > 0) skipNotes.push(`${protectedCount} protected`);
     const skipString = skipNotes.length > 0 ? ` (${skipNotes.join(" and ")})` : "";
 
+    const proceed = async () => {
+      try {
+        await Promise.all(safeIds.map(id => changeUserStatus(id, newStatus)));
+        clearSelection();
+        const skippedNote = skipNotes.length > 0 ? ` · ${alreadyUpdated + protectedCount} skipped.` : "";
+        showStatus(`${safeIds.length} user(s) set to ${newStatus}.${skippedNote}`);
+        load();
+      } catch (err) {
+        showStatus(err?.message ?? "Bulk status change failed.", "error");
+      }
+    };
+
+    if (newStatus === "Active") {
+      proceed();
+      return;
+    }
+
+    const isSuspended = newStatus === "Suspended";
+    const consequence = isSuspended 
+      ? "Their accounts will be immediately disabled and access will be revoked."
+      : "They will not be able to log in until reactivated.";
+
     openConfirm({
-      title:        "Change Status",
-      message:      `Set ${safeIds.length} user(s) to ${newStatus}?${skipString}`,
-      confirmLabel: `Set to ${newStatus}`,
-      danger:       newStatus === "Suspended",
-      onConfirm:    async () => {
-        try {
-          await Promise.all(safeIds.map(id => changeUserStatus(id, newStatus)));
-          clearSelection();
-          const skippedNote = skipNotes.length > 0 ? ` · ${alreadyUpdated + protectedCount} skipped.` : "";
-          showStatus(`${safeIds.length} user(s) set to ${newStatus}.${skippedNote}`);
-          load();
-        } catch (err) {
-          showStatus(err?.message ?? "Bulk status change failed.", "error");
-        }
-      },
+      title:        isSuspended ? "Suspend Users" : "Deactivate Users",
+      message: (
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <div>Are you sure you want to {isSuspended ? "suspend" : "deactivate"} the following users?</div>
+          {safeUsers.length <= 5 ? (
+            <ul style={{ margin: 0, paddingLeft: 20 }}>
+              {safeUsers.map(u => (
+                <li key={u.userId}><strong>{u.username}</strong> ({u.email})</li>
+              ))}
+            </ul>
+          ) : (
+            <div><strong>{safeUsers.length} users selected</strong></div>
+          )}
+          <div>{consequence} {skipString}</div>
+        </div>
+      ),
+      confirmLabel: isSuspended ? "Suspend" : "Set to Inactive",
+      danger:       isSuspended,
+      onConfirm:    proceed,
     });
   }
 

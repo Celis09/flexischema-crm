@@ -593,14 +593,27 @@ export default function ContactsPage({ userRole, requireLogin }) {
       return;
     }
 
-    try {
-      await changeContactStatus(contactId, newStatus);
-      showStatus(`Contact set to ${newStatus}.`);
-      filters.refresh();
-    } catch (err) {
-      showStatus(err?.message ?? "Status change failed.", "error");
+    const proceed = async () => {
+      try {
+        await changeContactStatus(contactId, newStatus);
+        showStatus(`Contact set to ${newStatus}.`);
+        filters.refresh();
+      } catch (err) {
+        showStatus(err?.message ?? "Status change failed.", "error");
+      }
+    };
+
+    if (newStatus === "Inactive" || newStatus === "Archived") {
+      openConfirm({
+        title:   `Set to ${newStatus}`,
+        message: `Are you sure you want to change ${contact?.firstName ?? "this contact"}'s status to ${newStatus}?`,
+        onConfirm: proceed,
+      });
+      return;
     }
-  }, [requireLogin, showStatus, filters]);
+
+    await proceed();
+  }, [requireLogin, showStatus, filters, openConfirm]);
 
   const handleBulkStatus = useCallback((newStatus) => {
     if (!requireLogin() || selectedIdsRef.current.length === 0) return;
