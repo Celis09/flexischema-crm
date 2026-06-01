@@ -649,6 +649,25 @@ const ContactsTable = memo(function ContactsTable(props: any) {
           })}
         </div>
       </div>
+
+      {!loading && displayContacts.length === 0 && (
+        <div style={{
+          position: 'absolute',
+          top: 40,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'var(--fs-text-dim, #6b7280)',
+          background: 'var(--fs-bg-elevated, #ffffff)',
+          zIndex: 10,
+          fontSize: '0.9rem'
+        }}>
+          No contacts found.
+        </div>
+      )}
     </div>
   );
 });
