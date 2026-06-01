@@ -203,7 +203,7 @@ function useDrawerConfig(roleKey, allColumnIds) {
 
 // ─── useContactFilters ────────────────────────────────────────────────────────
 
-function useContactFilters(loadContacts, setPage, getSort) {
+function useContactFilters(loadContacts, setPage, getSort, isAdmin) {
   const [searchTerm,   setSearchTerm]   = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [fromDate,     setFromDate]     = useState("");
@@ -223,11 +223,11 @@ function useContactFilters(loadContacts, setPage, getSort) {
     const { searchTerm: st, filterStatus: status, fromDate: fd, toDate: td } = filterRef.current;
     const { key: sortBy, direction: sortOrder } = getSort();
     loadContacts(st, {
-      status:   status || undefined,
-      fromDate: fd     || undefined,
-      toDate:   td     || undefined,
+      status:   isAdmin ? (status || undefined) : "Active",
+      fromDate: isAdmin ? (fd || undefined) : undefined,
+      toDate:   isAdmin ? (td || undefined) : undefined,
     }, { sortBy, sortOrder });
-  }, [loadContacts, getSort]);
+  }, [loadContacts, getSort, isAdmin]);
 
   useEffect(() => {
     setPage(1);
@@ -239,9 +239,9 @@ function useContactFilters(loadContacts, setPage, getSort) {
     setPage(1);
     const { key: sortBy, direction: sortOrder } = getSort();
     loadContacts("", {
-      status:   filterRef.current.filterStatus || undefined,
-      fromDate: filterRef.current.fromDate     || undefined,
-      toDate:   filterRef.current.toDate       || undefined,
+      status:   isAdmin ? (filterRef.current.filterStatus || undefined) : "Active",
+      fromDate: isAdmin ? (filterRef.current.fromDate || undefined) : undefined,
+      toDate:   isAdmin ? (filterRef.current.toDate || undefined) : undefined,
     }, { sortBy, sortOrder });
   }
 
@@ -254,7 +254,7 @@ function useContactFilters(loadContacts, setPage, getSort) {
     setPage(1);
     const { key: sortBy, direction: sortOrder } = getSort();
     loadContacts(currentSearch, {
-      status:   undefined,
+      status:   isAdmin ? undefined : "Active",
       fromDate: undefined,
       toDate:   undefined,
     }, { sortBy, sortOrder });
@@ -474,7 +474,7 @@ export default function ContactsPage({ userRole, requireLogin }) {
     contactsRef.current = contacts;
   }, [contacts]);
 
-  const filters = useContactFilters(loadContacts, setPage, () => sortConfigRef.current);
+  const filters = useContactFilters(loadContacts, setPage, () => sortConfigRef.current, isAdmin);
 
   const { drawerColumnOrder, handleDrawerReorder } = useDrawerConfig(
     roleConfig.key,
