@@ -888,6 +888,16 @@ export default function ContactsPage({ userRole, requireLogin }) {
           onRowOpen={drawerEnabled ? handleRowOpen : undefined}
           loading={loading}
         />
+        {!loading && contacts.length === 0 && (
+          <div className="fs-state-row" style={{
+            padding: '1rem',
+            textAlign: 'center',
+            color: 'var(--fs-text-dim, #6b7280)',
+            fontStyle: 'italic',
+          }}>
+            No contacts found.
+          </div>
+        )}
       </div>
 
       <Pagination
