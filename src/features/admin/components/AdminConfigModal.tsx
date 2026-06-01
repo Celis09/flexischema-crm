@@ -52,6 +52,32 @@ export default function AdminConfigModal({
         />
       </FormField>
 
+      {/* Description — read-only info; moved above value for context */}
+      {form.description && (
+        <FormField label="Description">
+          {isBool && form.value === "false" ? (
+            <div style={{
+              display:      "flex",
+              alignItems:   "flex-start",
+              gap:          8,
+              padding:      "9px 12px",
+              borderRadius: 6,
+              background:   "var(--fs-warning-bg, #FEF3C7)",
+              border:       "1px solid var(--fs-warning-border, #FCD34D)",
+              fontSize:     12,
+              color:        "var(--fs-warning-text, #92400E)",
+            }}>
+              <i className="fa-solid fa-triangle-exclamation" style={{ marginTop: 2, flexShrink: 0 }} />
+              <div>
+                <strong>Warning:</strong> {form.description}
+              </div>
+            </div>
+          ) : (
+            <p className="fs-modal-desc">{form.description}</p>
+          )}
+        </FormField>
+      )}
+
       {/* Value — toggle for booleans, text input otherwise */}
       <FormField label="Value" htmlFor="ac-value" error={errors.value}>
         {isBool ? (
@@ -59,7 +85,7 @@ export default function AdminConfigModal({
             id="ac-value"
             checked={form.value === "true"}
             onChange={() => onChange({ ...form, value: form.value === "true" ? "false" : "true" })}
-            label={form.value}
+            label={form.value === "true" ? "Enabled" : "Disabled"}
           />
         ) : (
           <input
@@ -73,13 +99,6 @@ export default function AdminConfigModal({
           />
         )}
       </FormField>
-
-      {/* Description — read-only info; no htmlFor needed as child is a <p> */}
-      {form.description && (
-        <FormField label="Description">
-          <p className="fs-modal-desc">{form.description}</p>
-        </FormField>
-      )}
     </ModalShell>
   );
 }
