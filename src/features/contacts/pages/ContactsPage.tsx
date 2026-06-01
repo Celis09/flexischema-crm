@@ -874,28 +874,31 @@ export default function ContactsPage({ userRole, requireLogin }) {
         </div>
       )}
 
-      <div style={{ width: "100%", overflowX: "auto" }}>
-        <ContactsTable
-          contacts={contacts}
-          definitions={activeDefinitions}
-          columnOrder={colConfig.effectiveColumnOrder}
-          selectedIds={selectedIds}
-          onSelect={setSelectedIds}
-          activeRow={activeRow}
-          onActiveRowChange={setActiveRow}
-          sortConfig={sortConfig}
-          onSort={handleSort}
-          isAdmin={isAdmin}
-          onStatusChange={handleStatusChange}
-          onRowOpen={drawerEnabled ? handleRowOpen : undefined}
-          loading={loading}
-        />
+      <div className="fs-grid-card" style={{ display: 'flex', flexDirection: 'column', width: "100%", overflow: "hidden" }}>
+        <div style={{ flex: 1, overflowX: "auto", overflowY: "hidden" }}>
+          <ContactsTable
+            contacts={contacts}
+            definitions={activeDefinitions}
+            columnOrder={colConfig.effectiveColumnOrder}
+            selectedIds={selectedIds}
+            onSelect={setSelectedIds}
+            activeRow={activeRow}
+            onActiveRowChange={setActiveRow}
+            sortConfig={sortConfig}
+            onSort={handleSort}
+            isAdmin={isAdmin}
+            onStatusChange={handleStatusChange}
+            onRowOpen={drawerEnabled ? handleRowOpen : undefined}
+            loading={loading}
+          />
+        </div>
         {!loading && contacts.length === 0 && (
           <div className="fs-state-row" style={{
             padding: '1rem',
             textAlign: 'center',
             color: 'var(--fs-text-dim, #6b7280)',
             fontStyle: 'italic',
+            borderTop: '1px solid var(--fs-border, #e5e7eb)'
           }}>
             No contacts found.
           </div>
