@@ -27,16 +27,22 @@ function mergeContactWithDefinitions(contact, definitions) {
   return base;
 }
 
-// ─── SectionLabel ─────────────────────────────────────────────────────────────
-function SectionLabel({ children, style }) {
+function SectionLabel({ children, style, action }) {
   return (
     <div style={{
       fontSize: 10, fontWeight: 800, letterSpacing: "1px",
       textTransform: "uppercase", color: "var(--fs-accent)",
       marginBottom: 12, display: "flex", alignItems: "center", gap: 10, ...style,
     }}>
-      {children}
+      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+        {children}
+      </div>
       <div style={{ flex: 1, height: 1, background: "var(--fs-border)" }} />
+      {action && (
+        <div style={{ flexShrink: 0 }}>
+          {action}
+        </div>
+      )}
     </div>
   );
 }
@@ -250,6 +256,7 @@ export default function ContactDrawer({
   drawerColumnOrder = [],
   hiddenColumns = new Set(),
   onDrawerReorder,
+  onDrawerReset,
 }) {
   const [local,         setLocal]         = useState(null);
   const [editingFields, setEditingFields] = useState({});
@@ -566,8 +573,29 @@ export default function ContactDrawer({
 
               {orderedExtraFields.length > 0 && (
                 <>
-                  <SectionLabel style={{ marginTop: 8 }}>
-                    Extra Fields
+                  <SectionLabel 
+                    style={{ marginTop: 8 }}
+                    action={
+                      canReorder && onDrawerReset && drawerColumnOrder.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={onDrawerReset}
+                          style={{
+                            background: "var(--fs-surface-hover)", border: "1px solid var(--fs-border)", 
+                            padding: "3px 8px", borderRadius: 4,
+                            fontSize: 9, fontWeight: 700, color: "var(--fs-text)",
+                            textTransform: "uppercase", cursor: "pointer", letterSpacing: 0,
+                            transition: "background 0.2s"
+                          }}
+                          onMouseEnter={e => e.target.style.background = "var(--fs-btn-bg-hov)"}
+                          onMouseLeave={e => e.target.style.background = "var(--fs-surface-hover)"}
+                        >
+                          Reset Order
+                        </button>
+                      )
+                    }
+                  >
+                    <span>Extra Fields</span>
                     {canReorder && (
                       <span style={{
                         fontSize: 9, fontWeight: 600, color: "var(--fs-text-dim)",

@@ -198,7 +198,12 @@ function useDrawerConfig(roleKey, allColumnIds) {
     saveDrawerConfig(roleKey, newOrder);
   }, [roleKey]);
 
-  return { drawerColumnOrder, handleDrawerReorder };
+  const handleDrawerReset = useCallback(() => {
+    localStorage.removeItem(`fs_drawer_order_${roleKey}`);
+    setDrawerColumnOrder([...allColumnIds]);
+  }, [roleKey, allColumnIds]);
+
+  return { drawerColumnOrder, handleDrawerReorder, handleDrawerReset };
 }
 
 // ─── useContactFilters ────────────────────────────────────────────────────────
@@ -478,9 +483,10 @@ export default function ContactsPage({ userRole, requireLogin }) {
     contactsRef.current = contacts;
   }, [contacts]);
 
-  const { drawerColumnOrder, handleDrawerReorder } = useDrawerConfig(
+  // ─── Drawer Config ───
+  const { drawerColumnOrder, handleDrawerReorder, handleDrawerReset } = useDrawerConfig(
     roleConfig.key,
-    colConfig.allColumnIds,
+    colConfig.allColumnIds
   );
 
   // ─── Drawer handlers ──────────────────────────────────────────────────────
@@ -976,6 +982,7 @@ export default function ContactsPage({ userRole, requireLogin }) {
           drawerColumnOrder={drawerColumnOrder}
           hiddenColumns={colConfig.hiddenColumns}
           onDrawerReorder={handleDrawerReorder}
+          onDrawerReset={handleDrawerReset}
         />
       )}
 
