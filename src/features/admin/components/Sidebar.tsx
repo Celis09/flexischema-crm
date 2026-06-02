@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useFlexiSchemaCSS } from "@/hooks/useFlexiSchemaCSS";
+import ConfirmModal from "@/features/contacts/components/ConfirmModal";
 import "./Sidebar.css";
 
 // ─── Nav config ───────────────────────────────────────────────────────────────
@@ -24,6 +25,8 @@ export default function Sidebar() {
     return localStorage.getItem("sidebarCollapsed") === "true";
   });
 
+  const [confirmOpen, setConfirmOpen] = useState(false);
+
   const handleToggle = () => {
     setCollapsed(c => {
       const newVal = !c;
@@ -32,7 +35,7 @@ export default function Sidebar() {
     });
   };
 
-  const handleLogout = () => {
+  const executeLogout = () => {
     localStorage.removeItem("role");
     localStorage.removeItem("username");
     localStorage.removeItem("userId");
@@ -40,59 +43,72 @@ export default function Sidebar() {
   };
 
   return (
-    <div className={`fs-sidebar${collapsed ? " fs-sidebar--collapsed" : ""}`}>
+    <>
+      <div className={`fs-sidebar${collapsed ? " fs-sidebar--collapsed" : ""}`}>
 
-      {/* Header */}
-      <div className="fs-sidebar__header">
-        <div className="fs-sidebar__logo">
-          <div className="fs-sidebar__logo-icon">
-            <i className="fa-solid fa-database" />
+        {/* Header */}
+        <div className="fs-sidebar__header">
+          <div className="fs-sidebar__logo">
+            <div className="fs-sidebar__logo-icon">
+              <i className="fa-solid fa-database" />
+            </div>
+            <span className="fs-sidebar__logo-text">Flexi<span style={{ color: "var(--fs-accent)" }}>Schema</span></span>
           </div>
-          <span className="fs-sidebar__logo-text">Flexi<span style={{ color: "var(--fs-accent)" }}>Schema</span></span>
+          <button
+            className="fs-sidebar__toggle"
+            onClick={handleToggle}
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            <i className={`fa-solid ${collapsed ? "fa-chevron-right" : "fa-chevron-left"}`} />
+          </button>
         </div>
-        <button
-          className="fs-sidebar__toggle"
-          onClick={handleToggle}
-          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-        >
-          <i className={`fa-solid ${collapsed ? "fa-chevron-right" : "fa-chevron-left"}`} />
-        </button>
+
+        {/* Nav */}
+        <nav className="fs-sidebar__nav" aria-label="Main navigation">
+          <div className="fs-sidebar__section-label">Menu</div>
+
+          {NAV_ITEMS.map(item => {
+            const isActive = location.pathname.startsWith(item.path);
+            return (
+              <button
+                key={item.path}
+                className={`fs-nav-item${isActive ? " fs-nav-item--active" : ""}`}
+                onClick={() => navigate(item.path)}
+                aria-current={isActive ? "page" : undefined}
+              >
+                <span className="fs-nav-item__icon"><i className={item.icon} /></span>
+                <span className="fs-nav-item__label">{item.label}</span>
+                <span className="fs-nav-item__tooltip">{item.label}</span>
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* Footer */}
+        <div className="fs-sidebar__footer">
+          <button
+            className="fs-nav-item"
+            onClick={() => setConfirmOpen(true)}
+          >
+            <span className="fs-nav-item__icon"><i className="fa-solid fa-right-from-bracket" /></span>
+            <span className="fs-nav-item__label">Logout</span>
+            <span className="fs-nav-item__tooltip">Logout</span>
+          </button>
+        </div>
+
       </div>
 
-      {/* Nav */}
-      <nav className="fs-sidebar__nav" aria-label="Main navigation">
-        <div className="fs-sidebar__section-label">Menu</div>
-
-        {NAV_ITEMS.map(item => {
-          const isActive = location.pathname.startsWith(item.path);
-          return (
-            <button
-              key={item.path}
-              className={`fs-nav-item${isActive ? " fs-nav-item--active" : ""}`}
-              onClick={() => navigate(item.path)}
-              aria-current={isActive ? "page" : undefined}
-            >
-              <span className="fs-nav-item__icon"><i className={item.icon} /></span>
-              <span className="fs-nav-item__label">{item.label}</span>
-              <span className="fs-nav-item__tooltip">{item.label}</span>
-            </button>
-          );
-        })}
-      </nav>
-
-      {/* Footer */}
-      <div className="fs-sidebar__footer">
-        <button
-          className="fs-nav-item"
-          onClick={handleLogout}
-        >
-          <span className="fs-nav-item__icon"><i className="fa-solid fa-right-from-bracket" /></span>
-          <span className="fs-nav-item__label">Logout</span>
-          <span className="fs-nav-item__tooltip">Logout</span>
-        </button>
-      </div>
-
-    </div>
+      <ConfirmModal
+        open={confirmOpen}
+        title="Log Out"
+        message="Are you sure you want to log out?"
+        confirmLabel="Log out"
+        cancelLabel="Cancel"
+        danger={true}
+        onConfirm={executeLogout}
+        onClose={() => setConfirmOpen(false)}
+      />
+    </>
   );
 }
