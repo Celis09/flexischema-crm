@@ -970,6 +970,7 @@ export default function ContactsPage({ userRole, requireLogin }) {
           definitions={activeDefinitions}
           onClose={handleDrawerClose}
           canEdit={canEdit}
+          isAdmin={isAdmin}
           canReorder={true}
           onSave={handleDrawerSave}
           drawerColumnOrder={drawerColumnOrder}

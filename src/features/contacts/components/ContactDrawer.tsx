@@ -244,6 +244,7 @@ export default function ContactDrawer({
   definitions,
   onClose,
   canEdit,
+  isAdmin = false,
   canReorder = false,
   onSave,
   drawerColumnOrder = [],
@@ -498,7 +499,7 @@ export default function ContactDrawer({
                   </p>
                   
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <StatusBadge status={contact.status} />
+                    <StatusBadge status={isAdmin ? contact.status : undefined} />
                     
                     {/* ── Dynamic Status Indicator ── */}
                     <div style={{
