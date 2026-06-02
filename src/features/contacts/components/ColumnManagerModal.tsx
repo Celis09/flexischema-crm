@@ -163,6 +163,7 @@ export default function ColumnManagerModal({
 
   // ── Save ──────────────────────────────────────────────────────────────────
   const handleRestoreDefaults = () => {
+    if (!window.confirm("Reset all columns to default? This can't be undone.")) return;
     const newOrder  = [...defaultColumnIds];
     const newHidden = new Set();
     saveColumnConfig(role, newOrder, newHidden);

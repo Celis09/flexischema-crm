@@ -580,17 +580,19 @@ export default function ContactDrawer({
                         <button
                           type="button"
                           onClick={onDrawerReset}
+                          title="Reset Order"
                           style={{
-                            background: "var(--fs-surface-hover)", border: "1px solid var(--fs-border)", 
-                            padding: "3px 8px", borderRadius: 4,
-                            fontSize: 9, fontWeight: 700, color: "var(--fs-text)",
-                            textTransform: "uppercase", cursor: "pointer", letterSpacing: 0,
-                            transition: "background 0.2s"
+                            background: "transparent", border: "none", 
+                            padding: "4px", borderRadius: 4,
+                            color: "var(--fs-text-dim)",
+                            cursor: "pointer",
+                            transition: "color 0.2s, background 0.2s",
+                            display: "flex", alignItems: "center", justifyContent: "center"
                           }}
-                          onMouseEnter={e => e.target.style.background = "var(--fs-btn-bg-hov)"}
-                          onMouseLeave={e => e.target.style.background = "var(--fs-surface-hover)"}
+                          onMouseEnter={e => { e.currentTarget.style.color = "var(--fs-accent)"; e.currentTarget.style.background = "var(--fs-surface-hover)"; }}
+                          onMouseLeave={e => { e.currentTarget.style.color = "var(--fs-text-dim)"; e.currentTarget.style.background = "transparent"; }}
                         >
-                          Reset Order
+                          <i className="fa-solid fa-arrow-rotate-left" style={{ fontSize: 11 }} />
                         </button>
                       )
                     }
