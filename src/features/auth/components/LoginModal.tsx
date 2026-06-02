@@ -102,21 +102,23 @@ export default function LoginModal({ open, onClose, onSuccess }) {
           <form onSubmit={handleSubmit} noValidate>
             <div className="fs-login-field">
               <label htmlFor="lm-username">Username</label>
-              <i className="fa-solid fa-user" />
-              <input
-                id="lm-username"
-                type="text"
-                placeholder="e.g. admin@core.io"
-                value={credentials.username}
-                autoComplete="username"
-                onChange={e => patch("username", e.target.value)}
-                onKeyDown={e => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    passwordRef.current?.focus();
-                  }
-                }}
-              />
+              <div className="fs-login-input-wrap">
+                <i className="fa-solid fa-user" />
+                <input
+                  id="lm-username"
+                  type="text"
+                  placeholder="e.g. admin@core.io"
+                  value={credentials.username}
+                  autoComplete="username"
+                  onChange={e => patch("username", e.target.value)}
+                  onKeyDown={e => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      passwordRef.current?.focus();
+                    }
+                  }}
+                />
+              </div>
               {errors.username && (
                 <span className="fs-login-field-error">
                   <i className="fa-solid fa-triangle-exclamation" />
@@ -127,35 +129,26 @@ export default function LoginModal({ open, onClose, onSuccess }) {
 
             <div className="fs-login-field">
               <label htmlFor="lm-password">Password</label>
-              <i className="fa-solid fa-lock" />
-              <input
-                id="lm-password"
-                ref={passwordRef}
-                type={showPassword ? "text" : "password"}
-                placeholder="••••••••"
-                value={credentials.password}
-                autoComplete="current-password"
-                onChange={e => patch("password", e.target.value)}
-                style={{ paddingRight: "40px" }}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(prev => !prev)}
-                style={{
-                  position: "absolute",
-                  right: "12px",
-                  top: "31px",
-                  background: "transparent",
-                  border: "none",
-                  color: "var(--fs-text-dim)",
-                  cursor: "pointer",
-                  fontSize: "14px",
-                  padding: "4px"
-                }}
-                aria-label={showPassword ? "Hide password" : "Show password"}
-              >
-                <i className={`fa-solid ${showPassword ? "fa-eye-slash" : "fa-eye"}`} style={{ position: "static", pointerEvents: "auto" }} />
-              </button>
+              <div className="fs-login-input-wrap">
+                <i className="fa-solid fa-lock" />
+                <input
+                  id="lm-password"
+                  ref={passwordRef}
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  value={credentials.password}
+                  autoComplete="current-password"
+                  onChange={e => patch("password", e.target.value)}
+                  style={{ paddingRight: "40px" }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(prev => !prev)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  <i className={`fa-solid ${showPassword ? "fa-eye-slash" : "fa-eye"}`} style={{ position: "static", pointerEvents: "auto" }} />
+                </button>
+              </div>
               {errors.password && (
                 <span className="fs-login-field-error">
                   <i className="fa-solid fa-triangle-exclamation" style={{ position: "static", pointerEvents: "auto" }} />

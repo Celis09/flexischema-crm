@@ -119,13 +119,34 @@
   margin-left:   4px;
 }
 
-.fs-login-field > i {
+.fs-login-input-wrap {
+  position: relative;
+}
+
+.fs-login-input-wrap > i {
   position:       absolute;
   left:           16px;
-  top:            35px;
+  top:            50%;
+  transform:      translateY(-50%);
   color:          var(--fs-text-dim);
   font-size:      14px;
   pointer-events: none;
+}
+
+.fs-login-input-wrap > button {
+  position:       absolute;
+  right:          12px;
+  top:            50%;
+  transform:      translateY(-50%);
+  background:     transparent;
+  border:         none;
+  color:          var(--fs-text-dim);
+  cursor:         pointer;
+  font-size:      14px;
+  padding:        4px;
+  display:        flex;
+  align-items:    center;
+  justify-content: center;
 }
 
 .fs-login-field-error {
