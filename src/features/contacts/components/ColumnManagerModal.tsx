@@ -10,6 +10,7 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { saveColumnConfig, arrayMove } from "@/lib/index";
+import ConfirmModal from "@/features/contacts/components/ConfirmModal";
 import "./ColumnManagerModal.css";
 
 const CORE_IDS    = new Set(["id", "name", "email"]);
@@ -52,9 +53,10 @@ export default function ColumnManagerModal({
     }));
   }, [columnOrder, hiddenColumns, allColumnIds, labelOf]);
 
-  const [items,      setItems]      = useState([]);
-  // UPGRADE: Track both the index and the validity of the hover
-  const [dragState,  setDragState]  = useState({ overIndex: null, isValid: true });
+  const [items, setItems] = useState([]);
+  const [toastMsg, setToastMsg] = useState(null);
+  const [dragState, setDragState] = useState({ overIndex: null, isValid: true });
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [warning,    setWarning]    = useState("");
   
   const warnTimer = useRef(null);
@@ -163,10 +165,14 @@ export default function ColumnManagerModal({
 
   // ── Save ──────────────────────────────────────────────────────────────────
   const handleRestoreDefaults = () => {
-    if (!window.confirm("Reset all columns to default? This can't be undone.")) return;
+    setConfirmOpen(true);
+  };
+
+  const executeRestoreDefaults = () => {
     const newOrder  = [...defaultColumnIds];
     const newHidden = new Set();
     saveColumnConfig(role, newOrder, newHidden);
+    setConfirmOpen(false);
     onSave(newOrder, newHidden);
   };
 
@@ -272,6 +278,17 @@ export default function ColumnManagerModal({
         </div>
 
       </div>
+
+      <ConfirmModal
+        open={confirmOpen}
+        title="Restore Defaults"
+        message="Reset all columns to default? This can't be undone."
+        confirmLabel="Reset"
+        cancelLabel="Cancel"
+        danger={true}
+        onConfirm={executeRestoreDefaults}
+        onClose={() => setConfirmOpen(false)}
+      />
     </>,
     document.body
   );
