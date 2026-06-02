@@ -144,7 +144,7 @@ export default function LoginModal({ open, onClose, onSuccess }) {
                 style={{
                   position: "absolute",
                   right: "12px",
-                  bottom: "12px",
+                  top: "31px",
                   background: "transparent",
                   border: "none",
                   color: "var(--fs-text-dim)",

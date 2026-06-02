@@ -119,13 +119,23 @@
   margin-left:   4px;
 }
 
-.fs-login-field i {
+.fs-login-field > i {
   position:       absolute;
   left:           16px;
-  bottom:         14px;
+  top:            35px;
   color:          var(--fs-text-dim);
   font-size:      14px;
   pointer-events: none;
+}
+
+.fs-login-field-error {
+  display:        flex;
+  align-items:    center;
+  gap:            6px;
+  margin-top:     6px;
+  color:          var(--fs-error-text);
+  font-size:      0.8rem;
+  font-weight:    500;
 }
 
 .fs-login-field input {
