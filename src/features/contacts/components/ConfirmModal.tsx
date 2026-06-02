@@ -23,6 +23,7 @@ export default function ConfirmModal({
   confirmLabel = "Confirm",
   cancelLabel  = "Cancel",
   danger       = false,
+  zIndex,
   onConfirm,
   onClose,
 }) {
@@ -42,6 +43,7 @@ export default function ConfirmModal({
       title={title}
       onClose={onClose}
       maxWidth={380}
+      zIndex={zIndex}
       footerStyle={{ justifyContent: "center" }}
       footer={
         <>

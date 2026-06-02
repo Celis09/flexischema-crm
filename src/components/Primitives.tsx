@@ -26,6 +26,7 @@ export function ModalShell(props: any) {
     subtitle,
     onClose,
     maxWidth = 480,
+    zIndex,
     headerRight,
     footer,
     children,
@@ -38,7 +39,7 @@ export function ModalShell(props: any) {
   if (!open) return null;
 
   return createPortal(
-    <div className="fs-modal-overlay">
+    <div className="fs-modal-overlay" style={zIndex ? { zIndex } : undefined}>
       <div className="fs-modal-card" style={{ maxWidth }}>
 
         {/* Header */}

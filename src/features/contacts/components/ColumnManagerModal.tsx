@@ -286,6 +286,7 @@ export default function ColumnManagerModal({
         confirmLabel="Reset"
         cancelLabel="Cancel"
         danger={true}
+        zIndex={1500}
         onConfirm={executeRestoreDefaults}
         onClose={() => setConfirmOpen(false)}
       />
