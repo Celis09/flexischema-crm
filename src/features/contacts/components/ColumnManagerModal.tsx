@@ -14,7 +14,8 @@ import ConfirmModal from "@/features/contacts/components/ConfirmModal";
 import "./ColumnManagerModal.css";
 
 const CORE_IDS    = new Set(["id", "name", "email"]);
-const CORE_LABELS = { id: "ID", name: "Name", email: "Email" };
+const CORE_LABELS = { id: "ID", name: "Name", email: "Email", status: "Status", changeStatus: "Change Status" };
+const ADMIN_LOCKED = new Set(["status", "changeStatus"]);
 
 export default function ColumnManagerModal({
   open,
@@ -24,6 +25,7 @@ export default function ColumnManagerModal({
   allColumnIds,
   defaultColumnIds,
   role,
+  isAdmin,
   onSave,
   onClose,
 }) {
@@ -49,9 +51,9 @@ export default function ColumnManagerModal({
       id,
       label:   labelOf(id),
       visible: !hiddenColumns.has(id),
-      isCore:  CORE_IDS.has(id),
+      isCore:  CORE_IDS.has(id) || (isAdmin && ADMIN_LOCKED.has(id)),
     }));
-  }, [columnOrder, hiddenColumns, allColumnIds, labelOf]);
+  }, [columnOrder, hiddenColumns, allColumnIds, labelOf, isAdmin]);
 
   const [items, setItems] = useState([]);
   const [toastMsg, setToastMsg] = useState(null);
@@ -82,7 +84,7 @@ export default function ColumnManagerModal({
 
   // ── Visibility toggles ────────────────────────────────────────────────────
   const toggleVisible = useCallback((id) => {
-    if (CORE_IDS.has(id)) return;
+    if (CORE_IDS.has(id) || (isAdmin && ADMIN_LOCKED.has(id))) return;
 
     setItems(prev => {
       const targetItem = prev.find(it => it.id === id);
@@ -249,7 +251,7 @@ export default function ColumnManagerModal({
                   className="fs-cm-row__checkbox"
                   checked={item.visible}
                   disabled={item.isCore}
-                  title={item.isCore ? "Core fields are always visible" : undefined}
+                  title={item.isCore ? "This field cannot be hidden" : undefined}
                   onChange={() => toggleVisible(item.id)}
                 />
                 <label 

@@ -35,7 +35,7 @@ import {
 // ─── Role constants ───────────────────────────────────────────────────────────
 
 const ROLE_CONFIG = {
-  Admin:  { pinned: ["select", "sequence"], core: ["id", "name", "email", "status", "createdDate"], key: "admin"  },
+  Admin:  { pinned: ["select", "sequence"], core: ["id", "name", "email", "status", "changeStatus", "createdDate"], key: "admin"  },
   Editor: { pinned: ["sequence"],           core: ["name", "email"],                                key: "editor" },
   Viewer: { pinned: ["sequence"],           core: ["name", "email"],                                key: "viewer" },
 };
@@ -988,6 +988,7 @@ export default function ContactsPage({ userRole, requireLogin }) {
         allColumnIds={colConfig.allColumnIds}
         defaultColumnIds={colConfig.defaultColumnIds}
         role={roleConfig.key}
+        isAdmin={isAdmin}
         onSave={colConfig.handleColumnManagerSave}
         onClose={colConfig.closeColumnManager}
       />
