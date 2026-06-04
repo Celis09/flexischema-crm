@@ -66,3 +66,13 @@ export async function exportContacts(format = "csv") {
   return apiFetch(`${BASE}/export?format=${format}`);
 }
 
+export async function getContactInsights(contactId, forceRegenerate = false) {
+  const params = forceRegenerate ? "?forceRegenerate=true" : "";
+  return apiFetch(`${BASE}/${contactId}/insights${params}`);
+}
+
+export async function aiSearchContacts(prompt, params = {}) {
+  const query = new URLSearchParams({ prompt, ...params });
+  return apiFetch(`${BASE}/ai-search?${query.toString()}`);
+}
+

@@ -107,7 +107,13 @@ export default function Metrics() {
       setMetrics(data);
       setLastRefresh(new Date());
     } catch (err) {
-      setError(err?.message ?? "Failed to load metrics");
+      const msg = err?.message ?? "";
+      if (msg.includes("Unauthorized") || msg.includes("401") || msg.includes("refresh failed")) {
+        setError(null);
+        setMetrics([]);
+      } else {
+        setError(msg || "Failed to load metrics");
+      }
     } finally {
       setLoading(false);
     }

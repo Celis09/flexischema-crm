@@ -38,3 +38,31 @@ export interface PaginatedResponse<T> {
   totalPages: number;
   totalCount: number;
 }
+
+export interface ContactInsightDto {
+  summary: string;
+  tag: "Lead" | "Active" | "At Risk";
+}
+
+export interface ContactFilterDto {
+  status?: string;
+  searchTerm?: string;
+  addedAfter?: string;
+  extraFieldFilters?: Record<string, string>;
+}
+
+export interface SearchContactsByAiQueryResult {
+  items: Contact[];
+  totalPages: number;
+  totalCount: number;
+  isAiFallback?: boolean;
+}
+
+export interface MapCsvHeadersRequest {
+  csvHeaders: string[];
+  sampleData: string[][];
+}
+
+export interface MapCsvHeadersResponse {
+  mapping: Record<string, string>;
+}

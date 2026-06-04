@@ -4,6 +4,14 @@ import { getDateRangePresets } from "@/features/admin/api/DateRangePresets";
 
 const CONTACT_STATUSES = ["Active", "Inactive", "Archived"];
 
+const MODE_SWITCH_STYLE: any = {
+  display: "inline-flex", alignItems: "center", gap: 4,
+  padding: "4px 8px", borderRadius: 8, fontSize: 11, fontWeight: 700,
+  cursor: "pointer", userSelect: "none", whiteSpace: "nowrap",
+  border: "1px solid var(--fs-border)",
+  transition: "all 0.15s", flexShrink: 0,
+};
+
 // ─── DatePresetDropdown ───────────────────────────────────────────────────────
 function DatePresetDropdown({ onSelect }) {
   const [open, setOpen] = useState(false);
@@ -57,6 +65,15 @@ export default function ContactsToolbar({
   loading,
   drawerEnabled,
   actions,
+  aiSearchMode,
+  onAiSearchModeChange,
+  onAiSearch,
+  onAiClear,
+  aiSearchInput,
+  onAiSearchInputChange,
+  isAiFallback,
+  aiTotalCount,
+  recentAiSearches,
 }) {
   const [dropOpen, setDropOpen] = useState(false);
 
@@ -67,29 +84,45 @@ export default function ContactsToolbar({
   }, []);
 
   return (
-    <form className="fs-action-bar" onSubmit={filters.handleSearch}>
+    <>
+    <form className="fs-action-bar" onSubmit={aiSearchMode ? (e) => e.preventDefault() : filters.handleSearch}>
       {/* ── Left group ── */}
       <div className="fs-left-g">
-        <div className="fs-search-wrap">
-          <span className="fs-search-icon">⌕</span>
-          <input
-            className="fs-input"
-            type="text"
-            placeholder="Search contacts..."
-            value={filters.searchTerm}
-            onChange={(e) => filters.setSearchTerm(e.target.value)}
-          />
-          {filters.hasSearch && (
-            <button
-              type="button"
-              className="fs-search-clear"
-              onMouseDown={(e) => { e.preventDefault(); filters.clearSearch(); }}
-              title="Clear search"
-            >
-              <i className="fa-solid fa-xmark" />
-            </button>
-          )}
+        {/* ── AI / Regular toggle ── */}
+        <div
+          onClick={() => onAiSearchModeChange?.(!aiSearchMode)}
+          style={{
+            ...MODE_SWITCH_STYLE,
+            color: aiSearchMode ? "var(--fs-text)" : "var(--fs-text-dim)",
+            background: aiSearchMode ? "var(--fs-accent-dim)" : "transparent",
+          }}
+        >
+          <i className={`fa-solid ${aiSearchMode ? "fa-robot" : "fa-magnifying-glass"}`} style={{ fontSize: 11 }} />
+          {aiSearchMode ? "AI" : "Regular"}
         </div>
+
+        {!aiSearchMode && (
+          <div className="fs-search-wrap">
+            <span className="fs-search-icon">⌕</span>
+            <input
+              className="fs-input"
+              type="text"
+              placeholder="Search contacts..."
+              value={filters.searchTerm}
+              onChange={(e) => filters.setSearchTerm(e.target.value)}
+            />
+            {filters.hasSearch && (
+              <button
+                type="button"
+                className="fs-search-clear"
+                onMouseDown={(e) => { e.preventDefault(); filters.clearSearch(); }}
+                title="Clear search"
+              >
+                <i className="fa-solid fa-xmark" />
+              </button>
+            )}
+          </div>
+        )}
 
         {isAdmin && (
           <select
@@ -258,5 +291,144 @@ export default function ContactsToolbar({
         )}
       </div>
     </form>
-  );
+
+    {aiSearchMode && isAiFallback && (
+      <div style={{
+        padding: "6px 16px", background: "var(--fs-warning-bg, #FFFBEB)",
+        borderBottom: "1px solid var(--fs-warning-border, #FDE68A)",
+        color: "var(--fs-warning-text, #B45309)", fontSize: 12,
+        display: "flex", alignItems: "center", gap: 6,
+      }}>
+        <i className="fa-solid fa-triangle-exclamation" style={{ fontSize: 11 }} />
+        AI search unavailable — showing standard results
+      </div>
+    )}
+
+    {aiSearchMode && (
+      <div style={{
+        padding: "10px 16px",
+        background: "var(--fs-glass)",
+        backdropFilter: "blur(12px)",
+        border: "1px solid var(--fs-border)",
+        borderRadius: "var(--fs-radius-lg)",
+        marginBottom: 16,
+        boxShadow: "var(--fs-shadow)",
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <i className="fa-solid fa-robot" style={{ fontSize: 16, color: "var(--fs-accent)", flexShrink: 0 }} />
+          <input
+            type="text"
+            placeholder='Ask AI to find contacts… e.g. "contacts added last week"'
+            value={aiSearchInput}
+            onChange={(e) => onAiSearchInputChange?.(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && aiSearchInput?.trim()) {
+                e.preventDefault();
+                onAiSearch?.(aiSearchInput.trim());
+              }
+            }}
+            style={{
+              flex: 1, padding: "10px 14px", borderRadius: "var(--fs-radius)", fontSize: 14,
+              fontFamily: "inherit",
+              border: "1px solid var(--fs-accent)",
+              background: "var(--fs-surface-input)",
+              color: "var(--fs-text)",
+              outline: "none",
+              boxShadow: "0 0 0 3px var(--fs-accent-glow)",
+            }}
+          />
+          {aiSearchInput && (
+            <button
+              type="button"
+              onClick={() => { onAiSearchInputChange?.(""); onAiClear?.(); }}
+              style={{
+                background: "none", border: "none", color: "var(--fs-text-dim)",
+                cursor: "pointer", padding: 6, fontSize: 16, flexShrink: 0,
+              }}
+              title="Clear"
+            >
+              <i className="fa-solid fa-xmark" />
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={() => aiSearchInput?.trim() && onAiSearch?.(aiSearchInput.trim())}
+            disabled={!aiSearchInput?.trim() || loading}
+            style={{
+              background: "var(--fs-accent)", border: "none", color: "#fff",
+              padding: "10px 22px", borderRadius: "var(--fs-radius)", fontSize: 14, fontWeight: 700,
+              cursor: loading ? "not-allowed" : (aiSearchInput?.trim() ? "pointer" : "not-allowed"),
+              fontFamily: "inherit", opacity: (loading || !aiSearchInput?.trim()) ? 0.5 : 1,
+              boxShadow: aiSearchInput?.trim() && !loading ? "0 4px 15px var(--fs-accent-glow)" : "none",
+              flexShrink: 0, display: "flex", alignItems: "center", gap: 6,
+            }}
+          >
+            {loading ? (
+              <i className="fa-solid fa-circle-notch fa-spin" />
+            ) : (
+              <i className="fa-solid fa-robot" />
+            )}
+            {loading ? "Searching…" : "AI Search"}
+          </button>
+        </div>
+
+        {!aiSearchInput && !aiTotalCount && (
+          <div style={{ marginTop: 8 }}>
+            <div style={{
+              display: "flex", gap: 6,
+              fontSize: 11, color: "var(--fs-text-dim)", alignItems: "center",
+            }}>
+              <span>Try:</span>
+              {["contacts added last week", "manager is Marco", "recent contacts"].map(ex => (
+                <button
+                  key={ex}
+                  type="button"
+                  onClick={() => { onAiSearchInputChange?.(ex); onAiSearch?.(ex); }}
+                  style={{
+                    background: "var(--fs-accent-dim)", border: "1px solid var(--fs-border)",
+                    color: "var(--fs-accent)", borderRadius: 12, padding: "2px 10px",
+                    fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
+                  }}
+                >
+                  {ex}
+                </button>
+              ))}
+            </div>
+            {recentAiSearches?.length > 0 && (
+              <div style={{
+                display: "flex", gap: 6, marginTop: 6,
+                fontSize: 11, color: "var(--fs-text-dim)", alignItems: "center",
+              }}>
+                <span style={{ opacity: 0.6 }}>Recent:</span>
+                {recentAiSearches.slice(0, 3).map((ex, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => { onAiSearchInputChange?.(ex); onAiSearch?.(ex); }}
+                    style={{
+                      background: "none", border: "1px solid var(--fs-border)",
+                      color: "var(--fs-text-dim)", borderRadius: 12, padding: "2px 10px",
+                      fontSize: 11, cursor: "pointer", fontFamily: "inherit",
+                    }}
+                  >
+                    {ex}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {aiTotalCount > 0 && (
+          <div style={{
+            marginTop: 6, fontSize: 12, color: "var(--fs-text-dim)",
+            display: "flex", alignItems: "center", gap: 4,
+          }}>
+            <i className="fa-solid fa-robot" style={{ fontSize: 10, color: "var(--fs-accent)" }} />
+            AI found <strong style={{ color: "var(--fs-text)" }}>{aiTotalCount}</strong> contact{aiTotalCount !== 1 ? "s" : ""}
+          </div>
+        )}
+      </div>
+    )}
+  </>);
 }

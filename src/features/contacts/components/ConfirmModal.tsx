@@ -23,7 +23,7 @@ export default function ConfirmModal({
   confirmLabel = "Confirm",
   cancelLabel  = "Cancel",
   danger       = false,
-  zIndex,
+  zIndex = undefined,
   onConfirm,
   onClose,
 }) {

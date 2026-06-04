@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { ModalShell, Button, ErrorBanner } from "@/components/Primitives";
-import { importContacts, previewImport } from "@/features/contacts/api/ContactsImportExportApi";
+import { importContacts, previewImport, mapCsvHeaders } from "@/features/contacts/api/ContactsImportExportApi";
+import { getExtraFieldDefinitions } from "@/features/admin/api/ExtraFieldDefinitionsApi";
 
 const STATUS_COLOR = {
   New:    "#16a34a",
@@ -191,6 +192,182 @@ function ExpandableRow({ row, idx, total }) {
   );
 }
 
+// ── Helpers to extract CSV headers from a File ──────────────────────────────
+
+function parseCsvLine(line) {
+  const fields = [];
+  let current = "";
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (inQuotes) {
+      if (ch === '"' && line[i + 1] === '"') { current += '"'; i++; }
+      else if (ch === '"') { inQuotes = false; }
+      else { current += ch; }
+    } else {
+      if (ch === '"') { inQuotes = true; }
+      else if (ch === ",") { fields.push(current.trim()); current = ""; }
+      else { current += ch; }
+    }
+  }
+  fields.push(current.trim());
+  return fields;
+}
+
+function parseCsvHeaders(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = e.target?.result;
+      if (!text || typeof text !== "string") return reject(new Error("Empty file"));
+      const lines = text.replace(/\r\n/g, "\n").split("\n").filter(Boolean);
+      if (lines.length < 1) return reject(new Error("No header row found"));
+
+      const headers = parseCsvLine(lines[0]);
+      const sampleData = lines.slice(1, 4).map(line => parseCsvLine(line));
+      resolve({ headers, sampleData });
+    };
+    reader.onerror = () => reject(new Error("Failed to read file"));
+    reader.readAsText(file);
+  });
+}
+
+// ── HeaderMappingStep ───────────────────────────────────────────────────────
+
+function HeaderMappingStep({ file, onMappingComplete, onBack }) {
+  const [csvHeaders, setCsvHeaders] = useState([]);
+  const [sampleRows, setSampleRows] = useState([]);
+  const [mapping, setMapping] = useState({});
+  const [mappingLoading, setMappingLoading] = useState(false);
+  const [aiApplied, setAiApplied] = useState(false);
+  const [extraFieldDefs, setExtraFieldDefs] = useState([]);
+
+  const systemFields = ["Name", "Email"];
+
+  useEffect(() => {
+    getExtraFieldDefinitions().then(defs => {
+      setExtraFieldDefs((defs || []).filter(d => d.isActive));
+    }).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (!file) return;
+    parseCsvHeaders(file).then(({ headers, sampleData }) => {
+      setCsvHeaders(headers);
+      setSampleRows(sampleData);
+      const initial = {};
+      headers.forEach(h => { initial[h] = ""; });
+      setMapping(initial);
+    }).catch(() => {});
+  }, [file]);
+
+  async function handleAutoMap() {
+    if (!csvHeaders.length) return;
+    setMappingLoading(true);
+    setAiApplied(false);
+    try {
+      const result = await mapCsvHeaders(csvHeaders, sampleRows);
+      if (result && typeof result === "object" && Object.keys(result).length > 0) {
+        setMapping(prev => ({ ...prev, ...result }));
+        setAiApplied(true);
+      }
+    } catch {
+      // silently fall back to manual
+    } finally {
+      setMappingLoading(false);
+    }
+  }
+
+  const allFieldOptions = [
+    ...systemFields,
+    ...extraFieldDefs.map(d => d.fieldName),
+  ];
+  const hasAnyMapping = Object.values(mapping).some(v => v);
+
+  return (
+    <div>
+      <div style={{ marginBottom: 12, display: "flex", alignItems: "center", gap: 8 }}>
+        <button
+          type="button"
+          onClick={handleAutoMap}
+          disabled={mappingLoading || !csvHeaders.length}
+          style={{
+            background: "var(--fs-accent)", border: "none", color: "#fff",
+            padding: "9px 18px", borderRadius: 10, fontSize: 13, fontWeight: 700,
+            cursor: mappingLoading ? "not-allowed" : "pointer", fontFamily: "inherit",
+            display: "flex", alignItems: "center", gap: 6, opacity: mappingLoading ? 0.7 : 1,
+          }}
+        >
+          <i className={`fa-solid ${mappingLoading ? "fa-circle-notch fa-spin" : "fa-wand-magic-sparkles"}`} />
+          {mappingLoading ? "Mapping…" : "Auto-Map with AI"}
+        </button>
+        {aiApplied && (
+          <span style={{ color: "#16a34a", fontSize: 12, fontWeight: 600, display: "flex", alignItems: "center", gap: 4 }}>
+            <i className="fa-solid fa-check-circle" />
+            AI mapping applied — review below
+          </span>
+        )}
+      </div>
+
+      {csvHeaders.length > 0 && (
+        <div style={{ overflowX: "auto", borderRadius: 8, border: "1px solid var(--fs-border)" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+            <thead>
+              <tr style={{ background: "var(--fs-th-bg, #f3f4f6)" }}>
+                <th style={{ padding: "8px 12px", textAlign: "left", fontWeight: 700, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.5px", color: "var(--fs-text-dim)" }}>
+                  CSV Header
+                </th>
+                <th style={{ padding: "8px 12px", textAlign: "left", fontWeight: 700, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.5px", color: "var(--fs-text-dim)" }}>
+                  Sample Value
+                </th>
+                <th style={{ padding: "8px 12px", textAlign: "left", fontWeight: 700, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.5px", color: "var(--fs-text-dim)" }}>
+                  Map to Field
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {csvHeaders.map((header, i) => (
+                <tr key={header} style={{ borderTop: "1px solid var(--fs-border)" }}>
+                  <td style={{ padding: "8px 12px", fontWeight: 600, color: "var(--fs-text)" }}>{header}</td>
+                  <td style={{ padding: "8px 12px", color: "var(--fs-text-dim)", fontSize: 12, maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {sampleRows[0]?.[i] || "—"}
+                  </td>
+                  <td style={{ padding: "8px 12px" }}>
+                    <select
+                      value={mapping[header] || ""}
+                      onChange={e => setMapping(prev => ({ ...prev, [header]: e.target.value }))}
+                      style={{
+                        width: "100%", padding: "6px 10px", borderRadius: 6, fontSize: 13,
+                        fontFamily: "inherit", border: "1px solid var(--fs-border)",
+                        background: "var(--fs-surface-card)", color: "var(--fs-text)",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <option value="">— Skip —</option>
+                      {allFieldOptions.map(f => (
+                        <option key={f} value={f} style={{ background: "var(--fs-surface-card)", color: "var(--fs-text)" }}>
+                          {f}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
+        <Button variant="cancel" onClick={onBack}>Back</Button>
+        <Button variant="primary" onClick={() => onMappingComplete(mapping)} disabled={!hasAnyMapping}>
+          Next: Preview Changes
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 // ── ImportModal ───────────────────────────────────────────────────────────────
 
 export default function ImportModal({ open, onClose, onConfirm }) {
@@ -198,11 +375,12 @@ export default function ImportModal({ open, onClose, onConfirm }) {
   const [autoCreateDefs,    setAutoCreateDefs]    = useState(false);
   const [overwriteExisting, setOverwriteExisting] = useState(false);
   const [preview,           setPreview]           = useState(null);
-  const [previewing,        setPreviewing]        = useState(false);
   const [confirming,        setConfirming]        = useState(false);
   const [error,             setError]             = useState("");
   const [showNoOp,          setShowNoOp]          = useState(false);
   const [visibleStatuses,   setVisibleStatuses]   = useState(["New", "Update", "Skip"]);
+  const [step,              setStep]              = useState(1);
+  const [headerMapping,     setHeaderMapping]     = useState(null);
 
   useEffect(() => {
     if (!open) {
@@ -213,6 +391,8 @@ export default function ImportModal({ open, onClose, onConfirm }) {
       setError("");
       setShowNoOp(false);
       setVisibleStatuses(["New", "Update", "Skip"]);
+      setStep(1);
+      setHeaderMapping(null);
     }
   }, [open]);
 
@@ -229,16 +409,14 @@ export default function ImportModal({ open, onClose, onConfirm }) {
 
   async function handlePreview() {
     if (!file) return;
-    setPreviewing(true);
     setError("");
     setPreview(null);
     try {
       const result = await previewImport(file, { autoCreateDefinitions: autoCreateDefs, overwriteExisting });
       setPreview(result);
+      setStep(3);
     } catch (err) {
       setError(parseError(err));
-    } finally {
-      setPreviewing(false);
     }
   }
 
@@ -256,10 +434,16 @@ export default function ImportModal({ open, onClose, onConfirm }) {
     }
   }
 
+  function handleMappingComplete(mapping) {
+    setHeaderMapping(mapping);
+    handlePreview();
+  }
+
   const steps = [
-    { step: 1, label: "Choose a CSV or Excel file", done: !!file    },
-    { step: 2, label: "Preview changes",   done: !!preview },
-    { step: 3, label: "Confirm import",    done: false      },
+    { step: 1, label: "Choose file",        done: !!file         },
+    { step: 2, label: "Map headers",        done: !!headerMapping },
+    { step: 3, label: "Preview changes",    done: !!preview       },
+    { step: 4, label: "Confirm import",     done: false           },
   ];
 
   const noOpCount        = preview?.rowPreviews.filter(r => r.reason === NO_OP_REASON).length ?? 0;
@@ -306,87 +490,96 @@ export default function ImportModal({ open, onClose, onConfirm }) {
     >
       {/* Steps indicator */}
       <div style={{ display: "flex", alignItems: "center", margin: "4px 0 8px" }}>
-        {steps.map((s, i) => (
-          <div key={s.step} style={{ display: "flex", alignItems: "center", flex: i < steps.length - 1 ? 1 : "none" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 6, whiteSpace: "nowrap" }}>
-              <span style={{
-                width: 22, height: 22, borderRadius: "50%",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: 11, fontWeight: 700, flexShrink: 0,
-                background: s.done ? "#16a34a" : "var(--fs-border)",
-                color:      s.done ? "#fff"    : "var(--fs-text-dim)",
-                border:     s.done ? "none"    : "1px solid var(--fs-border)",
-              }}>
-                {s.done ? "✓" : s.step}
-              </span>
-              <span style={{ fontSize: 12, fontWeight: s.done ? 600 : 400, color: s.done ? "var(--fs-text)" : "var(--fs-text-dim)" }}>
-                {s.label}
-              </span>
+        {steps.map((s, i) => {
+          const done = s.step <= step ? (s.done || step > s.step) : false;
+          return (
+            <div key={s.step} style={{ display: "flex", alignItems: "center", flex: i < steps.length - 1 ? 1 : "none" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, whiteSpace: "nowrap" }}>
+                <span style={{
+                  width: 22, height: 22, borderRadius: "50%",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 11, fontWeight: 700, flexShrink: 0,
+                  background: done ? "#16a34a" : "var(--fs-border)",
+                  color:      done ? "#fff"    : "var(--fs-text-dim)",
+                  border:     done ? "none"    : "1px solid var(--fs-border)",
+                }}>
+                  {done ? "✓" : s.step}
+                </span>
+                <span style={{ fontSize: 12, fontWeight: done ? 600 : 400, color: done ? "var(--fs-text)" : "var(--fs-text-dim)" }}>
+                  {s.label}
+                </span>
+              </div>
+              {i < steps.length - 1 && (
+                <div style={{ flex: 1, height: 1, margin: "0 8px", background: done ? "#16a34a40" : "var(--fs-border)" }} />
+              )}
             </div>
-            {i < steps.length - 1 && (
-              <div style={{ flex: 1, height: 1, margin: "0 8px", background: s.done ? "#16a34a40" : "var(--fs-border)" }} />
-            )}
+          );
+        })}
+      </div>
+
+      {step === 1 && (
+        <>
+          {/* File picker */}
+          <div className="fs-field">
+            <label className="fs-label">CSV or Excel File</label>
+            <input
+              type="file" accept=".csv, .xlsx, .xls" className="fs-modal-input"
+              style={{ height: "auto", padding: "8px 14px", cursor: "pointer" }}
+              onChange={async e => {
+                let selectedFile = e.target.files[0] || null;
+                if (selectedFile && (selectedFile.name.endsWith(".xlsx") || selectedFile.name.endsWith(".xls"))) {
+                  try {
+                    const XLSX = await import("xlsx");
+                    const data = await selectedFile.arrayBuffer();
+                    const workbook = XLSX.read(data, { type: "array" });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const csvString = XLSX.utils.sheet_to_csv(worksheet);
+                    const blob = new Blob([csvString], { type: "text/csv" });
+                    selectedFile = new File([blob], selectedFile.name.replace(/\.[^/.]+$/, ".csv"), { type: "text/csv" });
+                  } catch (err) {
+                    setError("Failed to parse Excel file.");
+                    selectedFile = null;
+                  }
+                }
+                setFile(selectedFile);
+                setPreview(null);
+                setHeaderMapping(null);
+                setStep(2);
+                if (!error) setError("");
+              }}
+            />
           </div>
-        ))}
-      </div>
 
-      {/* File picker */}
-      <div className="fs-field">
-        <label className="fs-label">CSV or Excel File</label>
-        <input
-          type="file" accept=".csv, .xlsx, .xls" className="fs-modal-input"
-          style={{ height: "auto", padding: "8px 14px", cursor: "pointer" }}
-          onChange={async e => {
-            let selectedFile = e.target.files[0] || null;
-            if (selectedFile && (selectedFile.name.endsWith(".xlsx") || selectedFile.name.endsWith(".xls"))) {
-              try {
-                const XLSX = await import("xlsx");
-                const data = await selectedFile.arrayBuffer();
-                const workbook = XLSX.read(data, { type: "array" });
-                const firstSheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[firstSheetName];
-                const csvString = XLSX.utils.sheet_to_csv(worksheet);
-                const blob = new Blob([csvString], { type: "text/csv" });
-                selectedFile = new File([blob], selectedFile.name.replace(/\.[^/.]+$/, ".csv"), { type: "text/csv" });
-              } catch (err) {
-                setError("Failed to parse Excel file.");
-                selectedFile = null;
-              }
-            }
-            setFile(selectedFile);
-            setPreview(null);
-            if (!error) setError("");
-          }}
-        />
-      </div>
+          {/* Options */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {[
+              { label: "Auto-create missing field definitions", value: autoCreateDefs,    set: setAutoCreateDefs    },
+              { label: "Overwrite existing field values",       value: overwriteExisting, set: setOverwriteExisting },
+            ].map(({ label, value, set }) => (
+              <label key={label} style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer", fontSize: 13, fontWeight: 600 }}>
+                <input type="checkbox" checked={value} onChange={e => { set(e.target.checked); setPreview(null); }} />
+                {label}
+              </label>
+            ))}
+          </div>
 
-      {/* Options */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-        {[
-          { label: "Auto-create missing field definitions", value: autoCreateDefs,    set: setAutoCreateDefs    },
-          { label: "Overwrite existing field values",       value: overwriteExisting, set: setOverwriteExisting },
-        ].map(({ label, value, set }) => (
-          <label key={label} style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer", fontSize: 13, fontWeight: 600 }}>
-            <input type="checkbox" checked={value} onChange={e => { set(e.target.checked); setPreview(null); }} />
-            {label}
-          </label>
-        ))}
-      </div>
-
-      {/* Preview button */}
-      {file && (
-        <div>
-          <Button variant={preview ? "cancel" : "primary"} onClick={handlePreview} disabled={previewing}>
-            {previewing ? "Loading…" : preview ? "Re-preview" : "Step 2: Preview Changes"}
-          </Button>
-        </div>
+          <ErrorBanner message={error} />
+        </>
       )}
 
-      <ErrorBanner message={error} />
+      {step === 2 && file && (
+        <HeaderMappingStep
+          file={file}
+          onMappingComplete={handleMappingComplete}
+          onBack={() => setStep(1)}
+        />
+      )}
 
-      {/* Preview results */}
-      {preview && (
+      {(step === 3 || step === 4) && preview && (
         <div>
+          <ErrorBanner message={error} />
+
           {/* ── Definition limit banner ── */}
           {definitionLimitReached && (
             <div style={{
@@ -409,10 +602,9 @@ export default function ImportModal({ open, onClose, onConfirm }) {
               </div>
             </div>
           )}
+
           {/* ── Status + issue pills ── */}
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14, flexWrap: "wrap" }}>
-
-            {/* Status filter pills */}
             {(["New", "Update", "Skip"]).map(status => {
               const active = visibleStatuses.includes(status);
               const count  = statusCounts[status];
@@ -438,7 +630,6 @@ export default function ImportModal({ open, onClose, onConfirm }) {
               );
             })}
 
-            {/* Informational issue badges */}
             {inactiveCount > 0 && (
               <span style={pill(BADGE_STYLES.inactive)}>{inactiveCount} Inactive Contact{inactiveCount !== 1 ? "s" : ""}</span>
             )}
@@ -458,7 +649,6 @@ export default function ImportModal({ open, onClose, onConfirm }) {
               <span style={pill(BADGE_STYLES.limitError)}>{limitErrorCount} Definition Limit Exceeded</span>
             )}
 
-            {/* No-op toggle */}
             {noOpCount > 0 && visibleStatuses.includes("Skip") && (
               <button
                 onClick={() => setShowNoOp(o => !o)}
@@ -473,7 +663,6 @@ export default function ImportModal({ open, onClose, onConfirm }) {
               </button>
             )}
 
-            {/* Expand hint */}
             {visibleRows.some(r => r.changes?.length > 0 || r.warnings?.length > 0) && (
               <span style={{ color: "var(--fs-text-dim)", fontSize: 11, display: "flex", alignItems: "center", gap: 4 }}>
                 <span style={{ border: "1px solid var(--fs-border)", borderRadius: 4, padding: "1px 5px", fontSize: 10, fontWeight: 600 }}>▼ show</span>
@@ -514,6 +703,10 @@ export default function ImportModal({ open, onClose, onConfirm }) {
                 : "All contacts are already up to date."}
             </div>
           )}
+
+          <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
+            <Button variant="cancel" onClick={() => setStep(2)}>Back to Mapping</Button>
+          </div>
         </div>
       )}
     </ModalShell>

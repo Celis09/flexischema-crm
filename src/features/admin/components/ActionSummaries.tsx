@@ -92,10 +92,14 @@ export default function ActionSummaries() {
       const total = data.totalCount ?? data.total ?? fetchedItems.length;
       setTotalPages(Math.max(1, Math.ceil(total / PAGE_SIZE)));
     } catch (err) {
-      if (err.errors && typeof err.errors === "object") {
+      const msg = err?.message ?? "";
+      if (msg.includes("Unauthorized") || msg.includes("401") || msg.includes("refresh failed")) {
+        setError(null);
+        setSummaries([]);
+      } else if (err.errors && typeof err.errors === "object") {
         setError(Object.values(err.errors).flat().join(" • "));
       } else {
-        setError(err?.message ?? "Failed to load action summaries");
+        setError(msg || "Failed to load action summaries");
       }
     } finally {
       setLoading(false);

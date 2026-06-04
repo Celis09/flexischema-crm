@@ -1,5 +1,6 @@
 // @ts-nocheck
 import API_BASE_URL from "@/config";
+import { apiFetch } from "@/lib/HttpClient";
 const API_BASE = API_BASE_URL;
 
 async function postCsvFile(endpoint, file, options: any = {}) {
@@ -43,6 +44,13 @@ export async function importContacts(file, options: any = {}) {
  * @param {"csv"|"json"|"xlsx"} format
  * @param {{ columns?: string[], ids?: (string|number)[] }} [opts]
  */
+export async function mapCsvHeaders(csvHeaders, sampleData) {
+  return apiFetch("/api/v1/contacts/import/map-headers", {
+    method: "POST",
+    body: JSON.stringify({ csvHeaders, sampleData }),
+  });
+}
+
 export async function exportContacts(format = "csv", opts = {}) {
   const backendFormat = format === "xlsx" ? "csv" : format;
   const params = new URLSearchParams({ format: backendFormat });

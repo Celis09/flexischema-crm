@@ -418,11 +418,17 @@ export default function UserManagementPage() {
         setTotalCount(items.length);
       }
     } catch (err) {
-      if (signal.aborted) return; 
-      if (err.errors && typeof err.errors === "object") {
+      if (signal.aborted) return;
+      const msg = err?.message ?? "";
+      if (msg.includes("Unauthorized") || msg.includes("401") || msg.includes("refresh failed")) {
+        // user is not logged in — silently skip
+        setError(null);
+        setUsers([]);
+        setTotalCount(0);
+      } else if (err.errors && typeof err.errors === "object") {
         setError(Object.values(err.errors).flat().join(" • "));
       } else {
-        setError(err?.message ?? "Failed to load users");
+        setError(msg || "Failed to load users");
       }
     } finally {
       if (!signal.aborted) {

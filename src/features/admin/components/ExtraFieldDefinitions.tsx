@@ -152,7 +152,7 @@ export default function ExtraFieldDefinitions() {
   // ── Other effects ─────────────────────────────────────────────────────────
 
   useEffect(() => {
-    getAdminConfigInt("MaxExtraFieldsPerContact", null).then(setMaxFields);
+    getAdminConfigInt("MaxExtraFieldsPerContact", null).then(setMaxFields).catch(() => {});
   }, []);
 
   useEffect(() => {

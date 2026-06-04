@@ -419,6 +419,8 @@ export default function ContactsPage({ userRole, requireLogin }) {
     loadContacts, createContact, saveContact,
     loadDefinitions,
     loading,
+    isAiFallback,
+    aiSearch,
   } = useContacts(roleConfig.key, 1, { status: isAdmin ? undefined : "Active" }, (msg) => {
     showStatusRef.current(msg, "error");
   });
@@ -700,6 +702,56 @@ export default function ContactsPage({ userRole, requireLogin }) {
     });
   }, [requireLogin, showStatus, filters, setSelectedIds, openConfirm, selectedIdsRef]);
 
+  // ─── AI Search ───────────────────────────────────────────────────────────
+
+  const AI_MODE_KEY = "fs-ai-search-mode";
+  const AI_RECENT_KEY = "fs-ai-recent-searches";
+
+  const [aiSearchMode, setAiSearchMode] = useState(() => localStorage.getItem(AI_MODE_KEY) === "true");
+  const [aiSearchInput, setAiSearchInput] = useState("");
+  const [recentAiSearches, setRecentAiSearches] = useState(() => {
+    try { return JSON.parse(localStorage.getItem(AI_RECENT_KEY) || "[]"); }
+    catch { return []; }
+  });
+
+  // When leaving AI mode, reset to regular contacts
+  const handleAiSearchModeChange = useCallback((newMode) => {
+    setAiSearchMode(newMode);
+    localStorage.setItem(AI_MODE_KEY, String(newMode));
+    if (!newMode) {
+      setAiSearchInput("");
+      filters.refresh();
+    }
+  }, [filters]);
+
+  const handleAiSearch = useCallback(async (prompt) => {
+    if (!prompt) return;
+    await aiSearch(prompt);
+    setRecentAiSearches(prev => {
+      const next = [prompt, ...prev.filter(p => p !== prompt)].slice(0, 5);
+      localStorage.setItem(AI_RECENT_KEY, JSON.stringify(next));
+      return next;
+    });
+  }, [aiSearch]);
+
+  const handleAiClear = useCallback(() => {
+    setAiSearchInput("");
+    filters.refresh();
+  }, [filters]);
+
+  const handleExport = useCallback(async ({ columns, exportSelected, format }, selectedIds) => {
+    closeExportModal();
+    try {
+      const ids = aiSearchMode && !exportSelected
+        ? contacts.map(c => c.id)
+        : (exportSelected && selectedIds?.length ? selectedIds : undefined);
+      await exportContacts(format || "csv", { columns, ids });
+      showStatus("Export started.");
+    } catch (err) {
+      showStatus(err?.message ?? "Export failed.", "error");
+    }
+  }, [aiSearchMode, contacts, showStatus, closeExportModal]);
+
   // ─── Print ────────────────────────────────────────────────────────────────
 
   const [printSetupOpen, setPrintSetupOpen] = useState(false);
@@ -853,26 +905,35 @@ export default function ContactsPage({ userRole, requireLogin }) {
         <h1 className="fs-page-title">Contacts <span>Directory</span></h1>
       </div>
 
-      <ContactsToolbar
-        filters={filters}
-        colConfig={colConfig}
-        selectedIds={selectedIds}
-        isAdmin={isAdmin}
-        canAdd={canAdd}
-        canEdit={canEdit}
-        loading={loading}
-        drawerEnabled={drawerEnabled}
-        actions={{
-          handleBulkStatus,
-          triggerRefresh,
-          toggleDrawerEnabled,
-          openImportModal,
-          openExportModal,
-          handlePrint,
-          openEditModal,
-          openAddModal,
-        }}
-      />
+        <ContactsToolbar
+          filters={filters}
+          colConfig={colConfig}
+          selectedIds={selectedIds}
+          isAdmin={isAdmin}
+          canAdd={canAdd}
+          canEdit={canEdit}
+          loading={loading}
+          drawerEnabled={drawerEnabled}
+          actions={{
+            handleBulkStatus,
+            triggerRefresh,
+            toggleDrawerEnabled,
+            openImportModal,
+            openExportModal,
+            handlePrint,
+            openEditModal,
+            openAddModal,
+          }}
+          aiSearchMode={aiSearchMode}
+          onAiSearchModeChange={handleAiSearchModeChange}
+          onAiSearch={handleAiSearch}
+          onAiClear={handleAiClear}
+          aiSearchInput={aiSearchInput}
+          onAiSearchInputChange={setAiSearchInput}
+          isAiFallback={isAiFallback}
+          aiTotalCount={aiSearchMode ? totalCount : 0}
+          recentAiSearches={recentAiSearches}
+        />
 
       {statusMessage && (
         <div className={`fs-toast fs-toast--${statusType}`}>
@@ -965,7 +1026,7 @@ export default function ContactsPage({ userRole, requireLogin }) {
         definitions={activeDefinitions}
         roleKey={roleConfig.key}
         selectedCount={selectedIds.length}
-        onConfirm={(opts) => handleExportConfirm(opts, selectedIds)}
+        onConfirm={(opts) => handleExport(opts, selectedIds)}
         onClose={closeExportModal}
       />
 

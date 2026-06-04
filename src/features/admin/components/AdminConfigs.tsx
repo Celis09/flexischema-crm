@@ -62,7 +62,13 @@ export default function AdminConfigs() {
       const data = await getAdminConfigs();
       setConfigs(data ?? []);
     } catch (err) {
-      setError(err?.message ?? "Failed to load configs");
+      const msg = err?.message ?? "";
+      if (msg.includes("Unauthorized") || msg.includes("401") || msg.includes("refresh failed")) {
+        setError(null);
+        setConfigs([]);
+      } else {
+        setError(msg || "Failed to load configs");
+      }
     } finally {
       setLoading(false);
     }

@@ -7,6 +7,7 @@ import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { parseContactErrors, getInputProps } from "@/lib/index";
 import { StatusBadge, CloseButton } from "@/components/Primitives";
+import { getContactInsights } from "@/features/contacts/api/ContactsApi";
 
 // ─── Helper: merge contact with definitions ───────────────────────────────────
 function mergeContactWithDefinitions(contact, definitions) {
@@ -244,6 +245,12 @@ const CORE_FIELDS = [
   { key: "email", label: "Email", fieldType: "email" },
 ];
 
+const tagColor = {
+  Lead:    { bg: "#3b82f618", fg: "#3b82f6" },
+  Active:  { bg: "#16a34a18", fg: "#16a34a" },
+  "At Risk": { bg: "#dc262618", fg: "#dc2626" },
+};
+
 export default function ContactDrawer({
   open,
   contact,
@@ -269,6 +276,9 @@ export default function ContactDrawer({
 
   // Store drag context safely in a component-scoped instance ref
   const dragRef = useRef(null);
+  const [insights, setInsights] = useState(null);
+  const [insightsLoading, setInsightsLoading] = useState(false);
+  const [insightsError, setInsightsError] = useState(null);
 
   const contactKey = contact
     ? (contact.id ?? contact.sequence ?? JSON.stringify(contact))
@@ -276,6 +286,32 @@ export default function ContactDrawer({
 
   // Determine if any fields are currently unlocked for editing
   const isEditingAny = Object.values(editingFields).some(Boolean);
+
+  const loadInsights = useCallback(async (forceRegenerate = false) => {
+    if (!contact?.id) return;
+    setInsightsLoading(true);
+    setInsightsError(null);
+    try {
+      const data = await getContactInsights(contact.id, forceRegenerate);
+      setInsights(data);
+    } catch (err) {
+      setInsightsError(err?.message || "Failed to load AI insights");
+    } finally {
+      setInsightsLoading(false);
+    }
+  }, [contact?.id]);
+
+  const handleRegenerate = useCallback(() => {
+    loadInsights(true);
+  }, [loadInsights]);
+
+  useEffect(() => {
+    if (!contact?.id) return;
+    setInsights(null);
+    setInsightsLoading(false);
+    setInsightsError(null);
+    loadInsights();
+  }, [contactKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!contact) return;
@@ -285,6 +321,9 @@ export default function ContactDrawer({
     setClientErrors({});
     setIsDirty(false);
     setServerErrors({});
+    setInsights(null);
+    setInsightsLoading(false);
+    setInsightsError(null);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contactKey, definitions]);
 
@@ -571,6 +610,66 @@ export default function ContactDrawer({
                 />
               ))}
 
+              {/* ── AI Insights ── */}
+              <SectionLabel style={{ marginTop: 8 }}>
+                🤖 AI Insights
+                {insights && !insightsLoading && !insightsError && (
+                  <span style={{
+                    marginLeft: 8, display: "inline-flex", alignItems: "center", gap: 4,
+                    padding: "2px 8px", borderRadius: 10, fontSize: 10, fontWeight: 700,
+                    background: tagColor[insights.tag]?.bg || "#6b728018",
+                    color: tagColor[insights.tag]?.fg || "#6b7280",
+                  }}>
+                    ● {insights.tag}
+                  </span>
+                )}
+              </SectionLabel>
+              <div style={{ marginBottom: 16, fontSize: 13, lineHeight: 1.5, color: "var(--fs-text-dim)" }}>
+                {insightsLoading ? (
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--fs-text-dim)", fontSize: 13 }}>
+                    <i className="fa-solid fa-circle-notch fa-spin" />
+                    Generating insights…
+                  </div>
+                ) : insightsError ? (
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <span style={{ color: "var(--fs-error-text)", fontSize: 13 }}>
+                      Unable to load AI insights
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => { setInsightsError(null); loadInsights(); }}
+                      style={{
+                        background: "none", border: "1px solid var(--fs-border)",
+                        color: "var(--fs-accent)", borderRadius: 6, padding: "3px 10px",
+                        fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
+                      }}
+                    >
+                      Retry
+                    </button>
+                  </div>
+                ) : insights ? (
+                  <div style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
+                    <span style={{ color: "var(--fs-text)", flex: 1 }}>
+                      {insights.summary}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleRegenerate}
+                      disabled={insightsLoading}
+                      title="Regenerate AI insights"
+                      style={{
+                        background: "none", border: "1px solid var(--fs-border)",
+                        color: "var(--fs-text-dim)", borderRadius: 6, padding: "4px 8px",
+                        fontSize: 11, cursor: insightsLoading ? "not-allowed" : "pointer",
+                        fontFamily: "inherit", flexShrink: 0, opacity: insightsLoading ? 0.5 : 1,
+                      }}
+                    >
+                      <i className={`fa-solid ${insightsLoading ? "fa-circle-notch fa-spin" : "fa-rotate"}`} />
+                    </button>
+                  </div>
+                ) : null}
+              </div>
+
               {orderedExtraFields.length > 0 && (
                 <>
                   <SectionLabel 
@@ -652,6 +751,7 @@ export default function ContactDrawer({
                   })}
                 </>
               )}
+
             </div>
 
             {/* ── Footer — only shown when dirty ── */}

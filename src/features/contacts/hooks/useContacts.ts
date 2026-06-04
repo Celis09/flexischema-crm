@@ -11,6 +11,7 @@ import {
   getContacts,
   addContact,
   updateContact,
+  aiSearchContacts,
 } from "@/features/contacts/api/ContactsApi";
 import { getExtraFieldDefinitions } from "@/features/admin/api/ExtraFieldDefinitionsApi";
 
@@ -41,6 +42,7 @@ export default function useContacts(roleKey = "default", initialPage = 1, defaul
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [isAiFallback, setIsAiFallback] = useState(false);
 
   const lastFiltersRef = useRef({ search: "", filters: {}, sortBy: "name", sortOrder: "asc" });
   const cancelRef = useRef(null);
@@ -230,6 +232,30 @@ export default function useContacts(roleKey = "default", initialPage = 1, defaul
     );
   }, []);
 
+  const aiSearch = useCallback(async (prompt) => {
+    if (cancelRef.current) cancelRef.current();
+    let cancelled = false;
+    cancelRef.current = () => { cancelled = true; };
+
+    setLoading(true);
+    setIsAiFallback(false);
+    try {
+      const data = await aiSearchContacts(prompt);
+      if (cancelled) return;
+      const items = data.contacts || [];
+      setContacts(items);
+      setTotalPages(1);
+      setTotalCount(items.length);
+      setIsAiFallback(!!data.isAiFallback);
+    } catch (err) {
+      if (cancelled) return;
+      setIsAiFallback(true);
+      if (onError) onError(err?.message || "AI search failed.");
+    } finally {
+      if (!cancelled) setLoading(false);
+    }
+  }, [onError]);
+
   return {
     definitions,
     contacts,
@@ -238,11 +264,13 @@ export default function useContacts(roleKey = "default", initialPage = 1, defaul
     totalPages,
     totalCount,
     loading,
+    isAiFallback,
     setPage: stableSetPage,
     setPageSize: stableSetPageSize,
     loadContacts,
     loadDefinitions,
     createContact,
     saveContact,
+    aiSearch,
   };
 }

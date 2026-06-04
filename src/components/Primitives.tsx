@@ -26,7 +26,7 @@ export function ModalShell(props: any) {
     subtitle,
     onClose,
     maxWidth = 480,
-    zIndex,
+    zIndex = undefined,
     headerRight,
     footer,
     children,

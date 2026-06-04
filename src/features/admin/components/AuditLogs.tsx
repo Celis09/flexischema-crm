@@ -225,10 +225,15 @@ export default function AuditLogs() {
       setLogs(data.items ?? []);
       setTotalCount(data.totalCount ?? 0);
     } catch (err) {
-      if (err.errors && typeof err.errors === "object") {
+      const msg = err?.message ?? "";
+      if (msg.includes("Unauthorized") || msg.includes("401") || msg.includes("refresh failed")) {
+        setError(null);
+        setLogs([]);
+        setTotalCount(0);
+      } else if (err.errors && typeof err.errors === "object") {
         setError(Object.values(err.errors).flat().join(" • "));
       } else {
-        setError(err?.message ?? "Failed to load audit logs");
+        setError(msg || "Failed to load audit logs");
       }
     } finally {
       setLoading(false);
