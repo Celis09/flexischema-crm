@@ -51,9 +51,9 @@ export default function ColumnManagerModal({
       id,
       label:   labelOf(id),
       visible: !hiddenColumns.has(id),
-      isCore:  CORE_IDS.has(id) || (isAdmin && ADMIN_LOCKED.has(id)),
+      isCore:  CORE_IDS.has(id),
     }));
-  }, [columnOrder, hiddenColumns, allColumnIds, labelOf, isAdmin]);
+  }, [columnOrder, hiddenColumns, allColumnIds, labelOf]);
 
   const [items, setItems] = useState([]);
   const [toastMsg, setToastMsg] = useState(null);
