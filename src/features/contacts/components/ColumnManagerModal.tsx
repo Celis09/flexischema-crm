@@ -104,10 +104,14 @@ export default function ColumnManagerModal({
   const showAll = () => setItems(prev => prev.map(it => ({ ...it, visible: true })));
 
   const hideAll = () => {
+    let didHide = false;
+    const lockedIds = isAdmin ? ADMIN_LOCKED : new Set();
     setItems(prev => {
       let firstExtraFound = false;
+      const hasFreeExtra = prev.some(it => !it.isCore && !lockedIds.has(it.id));
+      if (hasFreeExtra) didHide = true;
       return prev.map(it => {
-        if (it.isCore) return it;
+        if (it.isCore || lockedIds.has(it.id)) return it;
         if (!firstExtraFound) {
           firstExtraFound = true;
           return { ...it, visible: true };
@@ -115,7 +119,7 @@ export default function ColumnManagerModal({
         return { ...it, visible: false };
       });
     });
-    showWarning("Kept one extra field visible to meet layout requirements.");
+    if (didHide) showWarning("Kept one extra field visible to meet layout requirements.");
   };
 
   // ── Drag & Drop ───────────────────────────────────────────────────────────
