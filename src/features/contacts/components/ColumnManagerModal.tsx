@@ -52,8 +52,9 @@ export default function ColumnManagerModal({
       label:   labelOf(id),
       visible: !hiddenColumns.has(id),
       isCore:  CORE_IDS.has(id),
+      isLocked: isAdmin && ADMIN_LOCKED.has(id),
     }));
-  }, [columnOrder, hiddenColumns, allColumnIds, labelOf]);
+  }, [columnOrder, hiddenColumns, allColumnIds, labelOf, isAdmin]);
 
   const [items, setItems] = useState([]);
   const [toastMsg, setToastMsg] = useState(null);
@@ -108,11 +109,12 @@ export default function ColumnManagerModal({
     const lockedIds = isAdmin ? ADMIN_LOCKED : new Set();
     setItems(prev => {
       let firstExtraFound = false;
+      const hasLockedVisible = prev.some(it => lockedIds.has(it.id) && it.visible);
       const hasFreeExtra = prev.some(it => !it.isCore && !lockedIds.has(it.id));
       if (hasFreeExtra) didHide = true;
       return prev.map(it => {
         if (it.isCore || lockedIds.has(it.id)) return it;
-        if (!firstExtraFound) {
+        if (!hasLockedVisible && !firstExtraFound) {
           firstExtraFound = true;
           return { ...it, visible: true };
         }
@@ -205,7 +207,9 @@ export default function ColumnManagerModal({
           <div>
             <h2 id="fs-cm-title" className="fs-cm-header__title">Manage Columns</h2>
             <p className="fs-cm-header__subtitle">
-              Check to show · uncheck to hide · drag ⠿ to reorder within section
+              {isAdmin
+                ? "Drag ⠿ to reorder · ✕ to hide · 🔒 locked fields always visible"
+                : "Check to show · uncheck to hide · drag ⠿ to reorder within section"}
             </p>
           </div>
           <button className="fs-cm-close" onClick={onClose} aria-label="Close">
@@ -226,46 +230,57 @@ export default function ColumnManagerModal({
         {/* ── List ── */}
         <div className="fs-cm-list">
           {items.map((item, index) => {
-            // Determine active drag styles
             const isDragTarget = dragState.overIndex === index;
             let dragClass = "";
             if (isDragTarget) {
               dragClass = dragState.isValid ? "fs-cm-row--drag-over" : "fs-cm-row--drag-invalid";
             }
 
+            const locked = item.isLocked && isAdmin;
+            const prevItem = items[index - 1];
+            const showSection = index === 0 || (prevItem && prevItem.isCore !== item.isCore);
+
             return (
-              <div
-                key={item.id}
-                className={[
-                  "fs-cm-row",
-                  item.isCore ? "fs-cm-row--core" : "",
-                  !item.visible ? "fs-cm-row--hidden" : "",
-                  dragClass
-                ].filter(Boolean).join(" ")}
-                draggable
-                onDragStart={e => handleDragStart(e, index)}
-                onDragOver={e  => handleDragOver(e, index)}
-                onDrop={e      => handleDrop(e, index)}
-                onDragEnd={handleDragEnd}
-              >
-                <span className="fs-cm-row__handle" aria-hidden="true">⠿</span>
-                <input
-                  type="checkbox"
-                  id={`fs-cm-chk-${item.id}`}
-                  className="fs-cm-row__checkbox"
-                  checked={item.visible}
-                  disabled={item.isCore}
-                  title={item.isCore ? "This field cannot be hidden" : undefined}
-                  onChange={() => toggleVisible(item.id)}
-                />
-                <label 
-                  htmlFor={`fs-cm-chk-${item.id}`} 
-                  className="fs-cm-row__label"
+              <React.Fragment key={item.id}>
+                {showSection && (
+                  <div className="fs-cm-section-label">{item.isCore ? "Core Fields" : "Custom Fields"}</div>
+                )}
+                <div
+                  className={[
+                    "fs-cm-row",
+                    item.isCore ? "fs-cm-row--core" : "",
+                    locked ? "fs-cm-row--core" : "",
+                    !item.visible ? "fs-cm-row--hidden" : "",
+                    dragClass
+                  ].filter(Boolean).join(" ")}
+                  draggable
+                  onDragStart={e => handleDragStart(e, index)}
+                  onDragOver={e  => handleDragOver(e, index)}
+                  onDrop={e      => handleDrop(e, index)}
+                  onDragEnd={handleDragEnd}
                 >
-                  {item.label}
-                </label>
-                {item.isCore && <span className="fs-cm-row__core-badge">core</span>}
-              </div>
+                  <span className="fs-cm-row__handle" aria-hidden="true">⠿</span>
+                  <input
+                    type="checkbox"
+                    id={`fs-cm-chk-${item.id}`}
+                    className="fs-cm-row__checkbox"
+                    checked={item.visible}
+                    disabled={item.isCore || locked}
+                    title={item.isCore ? "This field cannot be hidden" : (locked ? "This field cannot be hidden" : undefined)}
+                    onChange={() => toggleVisible(item.id)}
+                  />
+                  <label 
+                    htmlFor={`fs-cm-chk-${item.id}`} 
+                    className="fs-cm-row__label"
+                  >
+                    {item.label}
+                  </label>
+                  {item.isCore && <span className="fs-cm-row__core-badge">core</span>}
+                  {locked && <span className="fs-cm-row__core-badge" style={{
+                    background: "var(--fs-accent-dim)", color: "var(--fs-accent)",
+                  }}>locked</span>}
+                </div>
+              </React.Fragment>
             );
           })}
         </div>
