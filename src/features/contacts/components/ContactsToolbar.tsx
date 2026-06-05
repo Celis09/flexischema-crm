@@ -74,6 +74,7 @@ export default function ContactsToolbar({
   isAiFallback,
   aiTotalCount,
   recentAiSearches,
+  aiExamples,
 }) {
   const [dropOpen, setDropOpen] = useState(false);
 
@@ -379,7 +380,7 @@ export default function ContactsToolbar({
               fontSize: 11, color: "var(--fs-text-dim)", alignItems: "center",
             }}>
               <span>Try:</span>
-              {["contacts added last week", "manager is Marco", "recent contacts"].map(ex => (
+              {aiExamples.map(ex => (
                 <button
                   key={ex}
                   type="button"

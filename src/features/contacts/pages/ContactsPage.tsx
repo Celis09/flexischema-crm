@@ -704,8 +704,14 @@ export default function ContactsPage({ userRole, requireLogin }) {
 
   // ─── AI Search ───────────────────────────────────────────────────────────
 
-  const AI_MODE_KEY = "fs-ai-search-mode";
-  const AI_RECENT_KEY = "fs-ai-recent-searches";
+  const AI_MODE_KEY = `fs-ai-search-mode-${roleConfig.key}`;
+  const AI_RECENT_KEY = `fs-ai-recent-searches-${roleConfig.key}`;
+
+  const aiExamples = isAdmin
+    ? ["contacts added last week", "manager is Marco", "inactive contacts"]
+    : canEdit
+    ? ["contacts added last week", "manager is Marco", "recent contacts"]
+    : ["recent contacts", "find by name", "contacts with email"];
 
   const [aiSearchMode, setAiSearchMode] = useState(() => localStorage.getItem(AI_MODE_KEY) === "true");
   const [aiSearchInput, setAiSearchInput] = useState("");
@@ -933,6 +939,7 @@ export default function ContactsPage({ userRole, requireLogin }) {
           isAiFallback={isAiFallback}
           aiTotalCount={aiSearchMode ? totalCount : 0}
           recentAiSearches={recentAiSearches}
+          aiExamples={aiExamples}
         />
 
       {statusMessage && (
