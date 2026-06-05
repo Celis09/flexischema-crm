@@ -612,7 +612,8 @@ export default function ContactDrawer({
 
               {/* ── AI Insights ── */}
               <SectionLabel style={{ marginTop: 8 }}>
-                🤖 AI Insights
+                <i className="fa-solid fa-robot" style={{ color: "var(--fs-accent)", marginRight: 6 }} />
+                AI Insights
                 {insights && !insightsLoading && !insightsError && (
                   <span style={{
                     marginLeft: 8, display: "inline-flex", alignItems: "center", gap: 4,
