@@ -7,7 +7,7 @@
  * Uses createPortal to escape parent stacking contexts.
  */
 
-import { useState, useCallback, useEffect, useRef, useMemo } from "react";
+import React, { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { saveColumnConfig, arrayMove } from "@/lib/index";
 import ConfirmModal from "@/features/contacts/components/ConfirmModal";
