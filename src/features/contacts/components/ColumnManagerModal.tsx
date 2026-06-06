@@ -121,7 +121,7 @@ export default function ColumnManagerModal({
         return { ...it, visible: false };
       });
     });
-    if (didHide) showWarning("Kept one extra field visible to meet layout requirements.");
+    if (didHide && !isAdmin) showWarning("Kept one extra field visible to meet layout requirements.");
   };
 
   // ── Drag & Drop ───────────────────────────────────────────────────────────
