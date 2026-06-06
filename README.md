@@ -11,9 +11,10 @@ A modern, highly-performant Contact Management and CRM application built with Re
 - **Role-Based Access Control (RBAC):** Secure routing and UI elements conditionally rendered based on user roles (`Admin`, `Editor`, `Viewer`).
 - **Dynamic Schema System:** Administrators can define custom "Extra Fields" for contacts, which instantly propagate to the UI, data tables, and forms.
 - **AI-Powered Features (Groq + LLaMA 3.1 8B):**
-  - **AI Search Bar**: Toggle between "Regular" and "AI" search modes. In AI mode, type natural language queries like *"contacts added last week"* or *"manager is Marco"* and the backend's Groq AI parses them into structured filters. Includes recent search history, example prompt pills, result counts, and graceful fallback to standard search.
-  - **Contact Insights**: Open any contact's drawer to see an AI-generated 2-sentence profile summary and relationship tag (Lead / Active / At Risk). Results are cached server-side; a regenerate button is available for fresh analysis.
-  - **Smart CSV Import Mapper**: When importing CSV files, the "Auto-Map with AI" button sends headers and sample data to the backend, which uses AI to infer column mappings to system fields. The AI suggestions pre-fill the dropdown selections; you can review and adjust every mapping before importing.
+  - **AI Search Bar**: Toggle between "Regular" and "AI" search modes. In AI mode, type natural language queries and the backend's Groq AI parses them into structured filters. Includes **per-role example prompts**, recent search history, loading spinner, result counts, clear button, and graceful fallback to standard search. **AI-filtered results can be exported directly** via the export button.
+  - **Contact Insights**: Open any contact's drawer to see an AI-generated 2-sentence profile summary and relationship tag (Lead / Active / At Risk). Results are cached server-side; a regenerate button is available for fresh analysis. Shows inline next to the section label.
+  - **Smart CSV Import Mapper**: When importing CSV files, the "Auto-Map with AI" button sends headers and sample data to the backend, which uses AI to infer column mappings to system fields. A proper CSV parser handles quoted commas. AI suggestions pre-fill dropdowns; you can review and adjust every mapping before importing.
+  - **Column Manager**: Drag-and-drop column reordering with Core Fields / Custom Fields section headers. For admins, **Status and Change Status are locked** (always visible) with a 🔒 badge indicator. Role-aware subtitle explains available actions.
 - **Import & Export Tools**: Full CSV/Excel import with preview, column selection for export, and print support.
 - **Admin Dashboard**: Analytics, metrics, audit logs, user management, and dynamic field schema administration.
 - **Feature-Based Architecture:** Code is modularized into business domains (Auth, Contacts, Admin) for maximum scalability.
@@ -113,6 +114,8 @@ src/
 
 ![Dashboard](./Dashboard.png)
 
+
+![Admin Dashboard](./Dashboard.png)
 
 ## 🧪 Testing
 
