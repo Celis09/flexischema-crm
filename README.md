@@ -2,10 +2,7 @@
 
 A modern, highly-performant Contact Management and CRM application built with React, TypeScript, and Vite. This application demonstrates scalable frontend architecture, robust state management, AI-powered features, and optimized rendering techniques suitable for enterprise environments.
 
-> **[PLACEHOLDER: Add a screenshot of the main Contacts Table / Dashboard here. e.g., `![Main Dashboard](./docs/screenshot-main.png)`]**
-
-![alt text](image-2.png)
-
+![Contacts Directory](./contacts-directory.png)
 
 ## ✨ Key Features
 
@@ -35,11 +32,9 @@ A modern, highly-performant Contact Management and CRM application built with Re
 - **File Parsing:** `xlsx` (SheetJS)
 - **Testing:** Vitest, React Testing Library, JSDOM
 
-> **[PLACEHOLDER: Add a GIF or screenshot showing the drag-and-drop column ordering or the dynamic drawer opening here. e.g., `![Drag and Drop](./docs/demo-dnd.gif)`]**
+![Column Manager](./column-manager.png)
 
-![alt text](image-3.png)
-![alt text](image-4.png)
-
+![Dynamic Drawer](./dynamic-drawer.png)
 
 ## 📂 Project Architecture
 
@@ -94,7 +89,7 @@ src/
 1. Clone the repository:
    ```bash
    git clone https://github.com/Celis09/flexischema-crm.git
-   cd contacts-app
+   cd flexischema-crm
    ```
 
 2. Install dependencies:
@@ -116,9 +111,7 @@ src/
 
 5. Open **http://localhost:5173** in your browser.
 
-> **[PLACEHOLDER: Add a screenshot of the Admin Dashboard showing metrics here. e.g., `![Admin Dashboard](./docs/screenshot-admin.png)`]**
-
-![alt text](image-1.png)
+![Dashboard](./Dashboard.png)
 
 
 ## 🧪 Testing
